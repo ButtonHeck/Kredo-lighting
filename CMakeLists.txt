@@ -19,14 +19,27 @@ include_directories(
     ${KREDO_SOURCES_DIR}
 )
 
+set(HEADER_FILES
+    "${KREDO_SOURCES_DIR}/core/application.h"
+    "${KREDO_SOURCES_DIR}/core/main_window.h"
+    "${KREDO_SOURCES_DIR}/opengl/opengl_window.h"
+    "${KREDO_SOURCES_DIR}/opengl/opengl_canvas.h"
+    "${KREDO_SOURCES_DIR}/opengl/opengl_manager.h"
+)
+
 set(SOURCE_FILES
-    "${KREDO_SOURCES_DIR}/main.cpp"
+    "${KREDO_SOURCES_DIR}/core/application.cpp"
+    "${KREDO_SOURCES_DIR}/core/main_window.cpp"
+    "${KREDO_SOURCES_DIR}/opengl/opengl_window.cpp"
+    "${KREDO_SOURCES_DIR}/opengl/opengl_canvas.cpp"
+    "${KREDO_SOURCES_DIR}/opengl/opengl_manager.cpp"
 )
 
 
 # Target
 add_executable(${PROJECT_NAME}
     ${SOURCE_FILES}
+    ${HEADER_FILES}
 )
 
 
