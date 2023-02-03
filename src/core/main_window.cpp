@@ -11,6 +11,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 #include "rc/log.xpm"
+#include "rc/kredo_logo.xpm"
 #pragma GCC diagnostic push
 
 namespace Kredo
@@ -22,7 +23,7 @@ enum ToolBarID
 };
 
 MainWindow::MainWindow()
-    : wxFrame(nullptr, wxID_ANY, "Kredo Lighting Sandbox", wxDefaultPosition, wxSize(1920, 1080), wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP)
+    : wxFrame(nullptr, wxID_ANY, "Kredo Lighting Sandbox", wxDefaultPosition, wxSize(1920, 1080), wxDEFAULT_FRAME_STYLE)
     , _logSplitter(new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_PERMIT_UNSPLIT))
     , _mainSplitter(new wxSplitterWindow(_logSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE))
     , _openglWindow(new OpenGLWindow(_mainSplitter))
@@ -44,6 +45,7 @@ void MainWindow::SetupWindow()
     Bind(wxEVT_CREATE, &MainWindow::OnWindowCreated, this);
 
     SetMinSize(wxSize(1024, 768));
+    SetIcon(kredo_logo_xpm);
 }
 
 void MainWindow::SetupToolBar()
@@ -76,6 +78,7 @@ void MainWindow::OnWindowCreated(wxWindowCreateEvent& event)
     event.Skip();
     _mainSplitter->SetSashGravity(1.0);
     _logSplitter->SetSashGravity(1.0);
+    SetFocus();
 }
 
 }
