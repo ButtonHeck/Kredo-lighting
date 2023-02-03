@@ -3,11 +3,13 @@
 #include <wx/frame.h>
 
 class wxTextCtrl;
+class wxSplitterWindow;
 
 namespace Kredo
 {
 
 class OpenGLWindow;
+class LoggerController;
 
 class MainWindow : public wxFrame
 {
@@ -16,11 +18,15 @@ public:
 
 private:
     void SetupWindow();
-    wxToolBar* CreateToolBar();
+    void SetupToolBar();
+    void ToggleLogWindow(wxCommandEvent& event);
 
 private:
     OpenGLWindow* _openglWindow;
-    wxTextCtrl* _log;
+    LoggerController* _logger;
+    wxToolBar* _toolBar;
+    wxSplitterWindow* _logSplitter;
+    wxSplitterWindow* _mainSplitter;
 };
 
 }

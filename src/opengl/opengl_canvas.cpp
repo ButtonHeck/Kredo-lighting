@@ -47,7 +47,7 @@ void OpenGLCanvas::OnSize(wxSizeEvent& event)
     }
 
     const auto size = event.GetSize() * GetContentScaleFactor();
-    wxLogMessage("OpenGL canvas onSize [%dx%d]", size.GetWidth(), size.GetHeight());
+    wxLogDebug("OpenGL canvas onSize [%dx%d]", size.GetWidth(), size.GetHeight());
 
     SetCurrent(*_context);
     _manager->SetSize(size.x, size.y);
@@ -84,8 +84,7 @@ bool OpenGLCanvas::InitializeManager()
         return false;
     }
 
-    // TODO: wxLogInfo
-    wxLogDebug("OpenGL manager and functions successfully initialized");
+    wxLogInfo("OpenGL manager and functions successfully initialized");
     return true;
 }
 
