@@ -1,11 +1,10 @@
-#include "core/logger_controller.h"
+#include "logger/logger_window.h"
 #include "core/main_window.h"
 #include "opengl/opengl_window.h"
 
 #include <wx/splitter.h>
 #include <wx/panel.h>
 #include <wx/toolbar.h>
-#include <wx/textctrl.h>
 
 #include <wx/wx.h>
 
@@ -24,34 +23,26 @@ enum ToolBarID
 
 MainWindow::MainWindow()
     : wxFrame(nullptr, wxID_ANY, "Kredo Lighting Sandbox", wxDefaultPosition, wxSize(1920, 1080), wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP)
-    , _openglWindow(nullptr)
-    , _logger(nullptr)
-    , _toolBar(nullptr)
-    , _logSplitter(new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE))
+    , _logSplitter(new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_PERMIT_UNSPLIT))
     , _mainSplitter(new wxSplitterWindow(_logSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE))
+    , _openglWindow(new OpenGLWindow(_mainSplitter))
+    , _loggerWindow(new LoggerWindow(_logSplitter))
+    , _toolBar(nullptr)
 {
     SetupWindow();
-
-    _logger = new LoggerController(new wxTextCtrl(_logSplitter, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY), "log.txt");
-    wxLog::SetActiveTarget(_logger);
-
     SetupToolBar();
-
-
-    _openglWindow = new OpenGLWindow(_mainSplitter);
 
     wxPanel* testPanel = new wxPanel(_mainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     testPanel->SetBackgroundColour(wxColor(255,128,128));
 
-    _mainSplitter->SetSashGravity(0.5);
-    _mainSplitter->SplitVertically(_openglWindow, testPanel);
-
-    _logSplitter->SetSashGravity(0.8);
-    _logSplitter->SplitHorizontally(_mainSplitter, _logger->TextLogger());
+    _mainSplitter->SplitVertically(_openglWindow, testPanel, GetSize().GetWidth() * 0.75);
+    _logSplitter->SplitHorizontally(_mainSplitter, _loggerWindow, GetSize().GetHeight() * GetContentScaleFactor() * 0.75);
 }
 
 void MainWindow::SetupWindow()
 {
+    Bind(wxEVT_CREATE, &MainWindow::OnWindowCreated, this);
+
     SetMinSize(wxSize(1024, 768));
 }
 
@@ -72,13 +63,19 @@ void MainWindow::ToggleLogWindow(wxCommandEvent& event)
     if (tool)
     {
         if (tool->IsToggled())
-            _logSplitter->SplitHorizontally(_mainSplitter, _logger->TextLogger());
+            _logSplitter->SplitHorizontally(_mainSplitter, _loggerWindow, GetSize().GetHeight() * GetContentScaleFactor() * 0.75);
         else
             _logSplitter->Unsplit();
 
-        _logSplitter->SetSashPosition(GetClientSize().GetHeight() * GetContentScaleFactor() * 0.8, true);
         _logSplitter->Update();
     }
+}
+
+void MainWindow::OnWindowCreated(wxWindowCreateEvent& event)
+{
+    event.Skip();
+    _mainSplitter->SetSashGravity(1.0);
+    _logSplitter->SetSashGravity(1.0);
 }
 
 }

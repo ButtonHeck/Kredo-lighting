@@ -22,7 +22,8 @@ include_directories(
 set(HEADER_FILES
     "${KREDO_SOURCES_DIR}/core/application.h"
     "${KREDO_SOURCES_DIR}/core/main_window.h"
-    "${KREDO_SOURCES_DIR}/core/logger_controller.h"
+    "${KREDO_SOURCES_DIR}/logger/logger_controller.h"
+    "${KREDO_SOURCES_DIR}/logger/logger_window.h"
     "${KREDO_SOURCES_DIR}/opengl/opengl_window.h"
     "${KREDO_SOURCES_DIR}/opengl/opengl_canvas.h"
     "${KREDO_SOURCES_DIR}/opengl/opengl_manager.h"
@@ -31,7 +32,8 @@ set(HEADER_FILES
 set(SOURCE_FILES
     "${KREDO_SOURCES_DIR}/core/application.cpp"
     "${KREDO_SOURCES_DIR}/core/main_window.cpp"
-    "${KREDO_SOURCES_DIR}/core/logger_controller.cpp"
+    "${KREDO_SOURCES_DIR}/logger/logger_controller.cpp"
+    "${KREDO_SOURCES_DIR}/logger/logger_window.cpp"
     "${KREDO_SOURCES_DIR}/opengl/opengl_window.cpp"
     "${KREDO_SOURCES_DIR}/opengl/opengl_canvas.cpp"
     "${KREDO_SOURCES_DIR}/opengl/opengl_manager.cpp"

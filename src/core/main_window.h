@@ -9,7 +9,7 @@ namespace Kredo
 {
 
 class OpenGLWindow;
-class LoggerController;
+class LoggerWindow;
 
 class MainWindow : public wxFrame
 {
@@ -20,13 +20,16 @@ private:
     void SetupWindow();
     void SetupToolBar();
     void ToggleLogWindow(wxCommandEvent& event);
+    void OnWindowCreated(wxWindowCreateEvent& event);
 
 private:
-    OpenGLWindow* _openglWindow;
-    LoggerController* _logger;
+    wxSplitterWindow* const _logSplitter;
+    wxSplitterWindow* const _mainSplitter;
+
+    OpenGLWindow* const _openglWindow;
+    LoggerWindow* const _loggerWindow;
+
     wxToolBar* _toolBar;
-    wxSplitterWindow* _logSplitter;
-    wxSplitterWindow* _mainSplitter;
 };
 
 }
