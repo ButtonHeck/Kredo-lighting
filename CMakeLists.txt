@@ -8,6 +8,8 @@ project(Kredo-lighting
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.opt/${PROJECT_NAME}")
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 unset("QT_QMAKE_EXECUTABLE")
 
 
@@ -45,6 +47,10 @@ add_executable(${PROJECT_NAME}
     ${SOURCE_FILES}
     ${HEADER_FILES}
 )
+
+
+# Installation
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 
 # Submodules
