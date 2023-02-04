@@ -6,6 +6,8 @@ project(Kredo-lighting
     LANGUAGES CXX
 )
 
+configure_file(Kredo-lighting-Config.h.in Kredo-lighting-Config.h)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.opt/${PROJECT_NAME}")
@@ -19,6 +21,7 @@ set(KREDO_VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
 
 include_directories(
     ${KREDO_SOURCES_DIR}
+    ${PROJECT_BINARY_DIR}
 )
 
 set(HEADER_FILES

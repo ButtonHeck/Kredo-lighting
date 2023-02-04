@@ -1,11 +1,11 @@
 #include "logger/logger_window.h"
 #include "core/main_window.h"
 #include "opengl/opengl_window.h"
+#include "Kredo-lighting-Config.h"
 
 #include <wx/splitter.h>
 #include <wx/panel.h>
 #include <wx/toolbar.h>
-
 #include <wx/wx.h>
 
 #pragma GCC diagnostic push
@@ -23,7 +23,7 @@ enum ToolBarID
 };
 
 MainWindow::MainWindow()
-    : wxFrame(nullptr, wxID_ANY, "Kredo Lighting Sandbox", wxDefaultPosition, wxSize(1920, 1080), wxDEFAULT_FRAME_STYLE)
+    : wxFrame(nullptr, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(1920, 1080), wxDEFAULT_FRAME_STYLE)
     , _logSplitter(new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_PERMIT_UNSPLIT))
     , _mainSplitter(new wxSplitterWindow(_logSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE))
     , _openglWindow(new OpenGLWindow(_mainSplitter))
@@ -44,6 +44,7 @@ void MainWindow::SetupWindow()
 {
     Bind(wxEVT_CREATE, &MainWindow::OnWindowCreated, this);
 
+    SetLabel(wxString::Format("Kredo Lighting Sandbox %d.%d", KREDO_LIGHTING_VERSION_MAJOR, KREDO_LIGHTING_VERSION_MINOR));
     SetMinSize(wxSize(1024, 768));
     SetIcon(kredo_logo_xpm);
 }
