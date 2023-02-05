@@ -1,5 +1,5 @@
-#include "opengl/opengl_window.h"
-#include "opengl/opengl_canvas.h"
+#include "opengl_window.h"
+#include "opengl_canvas.h"
 
 #include <wx/glcanvas.h>
 

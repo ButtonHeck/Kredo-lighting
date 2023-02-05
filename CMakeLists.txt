@@ -18,42 +18,29 @@ unset("QT_QMAKE_EXECUTABLE")
 # Sources and includes
 set(KREDO_SOURCES_DIR "${PROJECT_SOURCE_DIR}/src")
 set(KREDO_VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
+set(KREDO_RESOURCES_DIR "${PROJECT_SOURCE_DIR}/resources")
 
 include_directories(
     ${KREDO_SOURCES_DIR}
+    "${KREDO_SOURCES_DIR}/core"
+    "${KREDO_SOURCES_DIR}/logger"
+    "${KREDO_SOURCES_DIR}/opengl"
     ${PROJECT_BINARY_DIR}
 )
 
-set(HEADER_FILES
-    "${KREDO_SOURCES_DIR}/core/application.h"
-    "${KREDO_SOURCES_DIR}/core/main_window.h"
-    "${KREDO_SOURCES_DIR}/core/icon_helpers.h"
-    "${KREDO_SOURCES_DIR}/logger/logger_controller.h"
-    "${KREDO_SOURCES_DIR}/logger/logger_window.h"
-    "${KREDO_SOURCES_DIR}/opengl/opengl_window.h"
-    "${KREDO_SOURCES_DIR}/opengl/opengl_canvas.h"
-    "${KREDO_SOURCES_DIR}/opengl/opengl_manager.h"
-)
-
-set(SOURCE_FILES
-    "${KREDO_SOURCES_DIR}/core/application.cpp"
-    "${KREDO_SOURCES_DIR}/core/main_window.cpp"
-    "${KREDO_SOURCES_DIR}/core/icon_helpers.cpp"
-    "${KREDO_SOURCES_DIR}/logger/logger_controller.cpp"
-    "${KREDO_SOURCES_DIR}/logger/logger_window.cpp"
-    "${KREDO_SOURCES_DIR}/opengl/opengl_window.cpp"
-    "${KREDO_SOURCES_DIR}/opengl/opengl_canvas.cpp"
-    "${KREDO_SOURCES_DIR}/opengl/opengl_manager.cpp"
+file(GLOB KREDO_SOURCES
+    src/core/*.h
+    src/core/*.cpp
+    src/logger/*.h
+    src/logger/*.cpp
+    src/opengl/*.h
+    src/opengl/*.cpp
 )
 
 
 # Target
-add_executable(${PROJECT_NAME}
-    ${SOURCE_FILES}
-    ${HEADER_FILES}
-)
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE KREDO_RESOURCES_DIR="${PROJECT_SOURCE_DIR}/resources")
+add_executable(${PROJECT_NAME} ${KREDO_SOURCES})
+target_compile_definitions(${PROJECT_NAME} PRIVATE KREDO_RESOURCES_DIR="${KREDO_RESOURCES_DIR}")
 
 
 # Installation

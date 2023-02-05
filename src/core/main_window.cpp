@@ -1,7 +1,7 @@
-#include "logger/logger_window.h"
-#include "core/main_window.h"
-#include "opengl/opengl_window.h"
-#include "core/icon_helpers.h"
+#include "logger_window.h"
+#include "main_window.h"
+#include "opengl_window.h"
+#include "icon_helpers.h"
 #include "Kredo-lighting-Config.h"
 
 #include <wx/splitter.h>

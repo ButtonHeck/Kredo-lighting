@@ -1,5 +1,5 @@
-#include "core/application.h"
-#include "core/main_window.h"
+#include "application.h"
+#include "main_window.h"
 
 namespace Kredo
 {

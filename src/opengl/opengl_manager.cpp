@@ -1,4 +1,4 @@
-#include "opengl/opengl_manager.h"
+#include "opengl_manager.h"
 
 #include <wx/log.h>
 #include <glad/glad.h>

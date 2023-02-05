@@ -1,4 +1,4 @@
-#include "core/icon_helpers.h"
+#include "icon_helpers.h"
 
 namespace Kredo
 {
