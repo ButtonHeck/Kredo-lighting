@@ -27,6 +27,7 @@ include_directories(
 set(HEADER_FILES
     "${KREDO_SOURCES_DIR}/core/application.h"
     "${KREDO_SOURCES_DIR}/core/main_window.h"
+    "${KREDO_SOURCES_DIR}/core/icon_helpers.h"
     "${KREDO_SOURCES_DIR}/logger/logger_controller.h"
     "${KREDO_SOURCES_DIR}/logger/logger_window.h"
     "${KREDO_SOURCES_DIR}/opengl/opengl_window.h"
@@ -37,6 +38,7 @@ set(HEADER_FILES
 set(SOURCE_FILES
     "${KREDO_SOURCES_DIR}/core/application.cpp"
     "${KREDO_SOURCES_DIR}/core/main_window.cpp"
+    "${KREDO_SOURCES_DIR}/core/icon_helpers.cpp"
     "${KREDO_SOURCES_DIR}/logger/logger_controller.cpp"
     "${KREDO_SOURCES_DIR}/logger/logger_window.cpp"
     "${KREDO_SOURCES_DIR}/opengl/opengl_window.cpp"
@@ -50,6 +52,8 @@ add_executable(${PROJECT_NAME}
     ${SOURCE_FILES}
     ${HEADER_FILES}
 )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE KREDO_RESOURCES_DIR="${PROJECT_SOURCE_DIR}/resources")
 
 
 # Installation

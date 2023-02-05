@@ -1,18 +1,12 @@
 #include "logger/logger_window.h"
 #include "core/main_window.h"
 #include "opengl/opengl_window.h"
+#include "core/icon_helpers.h"
 #include "Kredo-lighting-Config.h"
 
 #include <wx/splitter.h>
 #include <wx/panel.h>
 #include <wx/toolbar.h>
-#include <wx/wx.h>
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#include "rc/log.xpm"
-#include "rc/kredo_logo.xpm"
-#pragma GCC diagnostic push
 
 namespace Kredo
 {
@@ -46,13 +40,13 @@ void MainWindow::SetupWindow()
 
     SetLabel(wxString::Format("Kredo Lighting Sandbox %d.%d", KREDO_LIGHTING_VERSION_MAJOR, KREDO_LIGHTING_VERSION_MINOR));
     SetMinSize(wxSize(1024, 768));
-    SetIcon(kredo_logo_xpm);
+    SetIcon(IconHelpers::LoadPngIcon("icons/kredo_logo.png"));
 }
 
 void MainWindow::SetupToolBar()
 {
     _toolBar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_DEFAULT_STYLE);
-    _toolBar->AddCheckTool(ID_ToolLog, "Log", log_xpm, wxBitmapBundle(), "Log");
+    _toolBar->AddCheckTool(ID_ToolLog, "Log", IconHelpers::LoadPngBitmap("icons/notebook.png", 32 ,32), wxBitmapBundle(), "Log");
 
     _toolBar->Realize();
     SetToolBar(_toolBar);
