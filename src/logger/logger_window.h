@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/window.h>
+#include <wx/log.h>
 
 namespace Kredo
 {

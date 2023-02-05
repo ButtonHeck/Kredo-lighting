@@ -41,6 +41,7 @@ file(GLOB KREDO_SOURCES
 # Target
 add_executable(${PROJECT_NAME} ${KREDO_SOURCES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE KREDO_RESOURCES_DIR="${KREDO_RESOURCES_DIR}")
+target_compile_definitions(${PROJECT_NAME} PRIVATE KREDO_CONFIG_DIR="$ENV{HOME}/.local/share/${PROJECT_NAME}")
 
 
 # Installation

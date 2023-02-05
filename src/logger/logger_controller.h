@@ -11,7 +11,7 @@ namespace Kredo
 class LoggerController : public wxLog
 {
 public:
-    LoggerController(wxTextCtrl* textLogger, const wxString& fileLogName);
+    LoggerController(wxTextCtrl* textLogger);
 
     wxTextCtrl* TextLogger() const;
 
