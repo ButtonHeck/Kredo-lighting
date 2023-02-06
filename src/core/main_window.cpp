@@ -11,18 +11,26 @@
 namespace Kredo
 {
 
+enum SplitterID
+{
+    ID_SplitterLog = wxID_HIGHEST + 1,
+    ID_SplitterMain,
+    ID_SplitterLast
+};
+
 enum ToolBarID
 {
-    ID_ToolLog = wxID_HIGHEST + 1,
+    ID_ToolLog = ID_SplitterLast + 1,
+    ID_ToolLast
 };
 
 MainWindow::MainWindow()
     : wxFrame(nullptr, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(1920, 1080), wxDEFAULT_FRAME_STYLE)
-    , _logSplitter(new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_PERMIT_UNSPLIT))
-    , _mainSplitter(new wxSplitterWindow(_logSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE))
+    , _toolBar(new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize))
+    , _logSplitter(new wxSplitterWindow(this, ID_SplitterLog, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_PERMIT_UNSPLIT))
+    , _mainSplitter(new wxSplitterWindow(_logSplitter, ID_SplitterMain, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE))
     , _openglWindow(new OpenGLWindow(_mainSplitter))
     , _loggerWindow(new LoggerWindow(_logSplitter))
-    , _toolBar(nullptr)
 {
     SetupWindow();
     SetupToolBar();
@@ -45,13 +53,13 @@ void MainWindow::SetupWindow()
 
 void MainWindow::SetupToolBar()
 {
-    _toolBar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_DEFAULT_STYLE);
     _toolBar->AddCheckTool(ID_ToolLog, "Log", IconHelpers::LoadPngBitmap("icons/notebook.png", 32 ,32), wxBitmapBundle(), "Log");
 
     _toolBar->Realize();
     SetToolBar(_toolBar);
 
     Bind(wxEVT_TOOL, &MainWindow::ToggleLogWindow, this, ID_ToolLog);
+    Bind(wxEVT_SPLITTER_UNSPLIT, [=](wxCommandEvent&) { _toolBar->ToggleTool(ID_ToolLog, false); }, ID_SplitterLog);
 }
 
 void MainWindow::ToggleLogWindow(wxCommandEvent& event)
@@ -71,8 +79,12 @@ void MainWindow::ToggleLogWindow(wxCommandEvent& event)
 void MainWindow::OnWindowCreated(wxWindowCreateEvent& event)
 {
     event.Skip();
+
     _mainSplitter->SetSashGravity(1.0);
     _logSplitter->SetSashGravity(1.0);
+
+    _toolBar->ToggleTool(ID_ToolLog, _logSplitter->IsSplit());
+
     SetFocus();
 }
 

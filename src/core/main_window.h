@@ -23,13 +23,13 @@ private:
     void OnWindowCreated(wxWindowCreateEvent& event);
 
 private:
+    wxToolBar* const _toolBar;
+
     wxSplitterWindow* const _logSplitter;
     wxSplitterWindow* const _mainSplitter;
 
     OpenGLWindow* const _openglWindow;
     LoggerWindow* const _loggerWindow;
-
-    wxToolBar* _toolBar;
 };
 
 }
