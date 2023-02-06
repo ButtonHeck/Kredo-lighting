@@ -22,6 +22,11 @@ wxTextCtrl* LoggerController::TextLogger() const
     return _textLogger;
 }
 
+void LoggerController::Clear()
+{
+    _textLogger->Clear();
+}
+
 void LoggerController::DoLogTextAtLevel(wxLogLevel level, const wxString& msg)
 {
     WXUNUSED(level)

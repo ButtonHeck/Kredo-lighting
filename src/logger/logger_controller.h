@@ -14,6 +14,7 @@ public:
     LoggerController(wxTextCtrl* textLogger);
 
     wxTextCtrl* TextLogger() const;
+    void Clear();
 
 protected:
     void DoLogTextAtLevel(wxLogLevel level, const wxString& msg);
