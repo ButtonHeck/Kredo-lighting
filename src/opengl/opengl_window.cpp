@@ -6,8 +6,8 @@
 namespace Kredo
 {
 
-OpenGLWindow::OpenGLWindow(wxWindow* parent)
-    : wxWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
+OpenGLWindow::OpenGLWindow(wxWindow* parent, int id)
+    : wxWindow(parent, id, wxDefaultPosition, wxDefaultSize)
     , _openglCanvas(nullptr)
 {
     Bind(wxEVT_SIZE, &OpenGLWindow::OnSize, this);

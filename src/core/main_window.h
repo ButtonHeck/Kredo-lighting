@@ -25,7 +25,6 @@ private:
 private:
     wxToolBar* const _toolBar;
 
-    wxSplitterWindow* const _logSplitter;
     wxSplitterWindow* const _mainSplitter;
 
     OpenGLWindow* const _openglWindow;

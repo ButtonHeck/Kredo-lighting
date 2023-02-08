@@ -1,6 +1,6 @@
 #pragma once
 
-#include <wx/window.h>
+#include <wx/frame.h>
 #include <wx/log.h>
 
 class wxToolBar;
@@ -10,17 +10,19 @@ namespace Kredo
 
 class LoggerController;
 
-class LoggerWindow : public wxWindow
+class LoggerWindow : public wxFrame
 {
 public:
-    LoggerWindow(wxWindow* parent);
+    LoggerWindow(wxWindow* parent, int id);
 
 private:
     wxToolBar* MakeControlsToolBar(wxWindow* parent);
     void ChangeFontSize(bool increase);
+    void onWindowClose(wxCloseEvent& event);
 
 private:
-    LoggerController* _loggerController;
+    wxWindow* const _parent;
+    LoggerController* const _loggerController;
 };
 
 }

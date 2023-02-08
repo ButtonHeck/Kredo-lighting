@@ -10,7 +10,7 @@ class OpenGLCanvas;
 class OpenGLWindow : public wxWindow
 {
 public:
-    explicit OpenGLWindow(wxWindow* parent = nullptr);
+    OpenGLWindow(wxWindow* parent, int id);
 
 private:
     void OnSize(wxSizeEvent& event);
