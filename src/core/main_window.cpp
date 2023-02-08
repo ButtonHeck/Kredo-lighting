@@ -53,7 +53,7 @@ void MainWindow::SetupWindow()
 
 void MainWindow::SetupToolBar()
 {
-    _toolBar->AddCheckTool(ID_ToolLog, "Log", IconHelpers::LoadPngBitmap("icons/notebook.png", 32 ,32), wxBitmapBundle(), "Log");
+    _toolBar->AddCheckTool(ID_ToolLog, "Log", IconHelpers::LoadPngBitmap("icons/notebook.png", 16, 16), wxBitmapBundle(), "Log");
 
     _toolBar->Realize();
     SetToolBar(_toolBar);
