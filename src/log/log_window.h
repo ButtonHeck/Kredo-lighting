@@ -8,13 +8,13 @@ class wxToolBar;
 namespace Kredo
 {
 
-class LoggerController;
+class LogController;
 
-class LoggerWindow : public wxFrame
+class LogWindow : public wxFrame
 {
 public:
-    LoggerWindow(wxWindow* parent, int id);
-    ~LoggerWindow();
+    LogWindow(wxWindow* parent, int id);
+    ~LogWindow();
 
 private:
     wxToolBar* MakeControlsToolBar(wxWindow* parent);
@@ -26,7 +26,7 @@ private:
 
 private:
     wxWindow* const _parent;
-    LoggerController* const _loggerController;
+    LogController* const _logController;
 };
 
 }

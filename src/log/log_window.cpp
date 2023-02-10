@@ -1,5 +1,5 @@
-#include "logger_window.h"
-#include "logger_controller.h"
+#include "log_window.h"
+#include "log_controller.h"
 #include "icon_helpers.h"
 
 #include <wx/font.h>
@@ -19,43 +19,43 @@ enum ControlToolID
     ID_ControlToolLast
 };
 
-LoggerWindow::LoggerWindow(wxWindow* parent, int id)
+LogWindow::LogWindow(wxWindow* parent, int id)
     : wxFrame(parent, id, "Log window", wxDefaultPosition, wxSize(480, 240))
     , _parent(parent)
-    , _loggerController(new LoggerController(new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY)))
+    , _logController(new LogController(new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY)))
 {
-    wxLog::SetActiveTarget(_loggerController);
+    wxLog::SetActiveTarget(_logController);
 
     const auto sizer = new wxBoxSizer(wxVERTICAL);
     sizer->Add(MakeControlsToolBar(this), 0);
-    sizer->Add(_loggerController->TextLogger(), 1, wxEXPAND);
+    sizer->Add(_logController->TextLog(), 1, wxEXPAND);
 
     SetMinSize(wxSize(480, 240));
     SetSizer(sizer);
 
-    Bind(wxEVT_CLOSE_WINDOW, &LoggerWindow::onWindowClose, this);
+    Bind(wxEVT_CLOSE_WINDOW, &LogWindow::onWindowClose, this);
 
     LoadSettings();
 }
 
-LoggerWindow::~LoggerWindow()
+LogWindow::~LogWindow()
 {
     SaveSettings();
 }
 
-wxToolBar* LoggerWindow::MakeControlsToolBar(wxWindow* parent)
+wxToolBar* LogWindow::MakeControlsToolBar(wxWindow* parent)
 {
     auto controlsToolBar = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_HORIZONTAL);
 
-    controlsToolBar->AddTool(ID_ControlToolClear, "Clear", IconHelpers::LoadPngBitmap("/icons/broom.png", 16, 16));
+    controlsToolBar->AddTool(ID_ControlToolClear, "Clear", IconHelpers::LoadPngBitmap16("/icons/broom.png"));
     controlsToolBar->SetToolShortHelp(ID_ControlToolClear, "Clear");
-    Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _loggerController->Clear(); }, ID_ControlToolClear);
+    Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->Clear(); }, ID_ControlToolClear);
 
-    controlsToolBar->AddTool(ID_ControlToolFontDecrease, "Decrease", IconHelpers::LoadPngBitmap("/icons/minus.png", 16, 16));
+    controlsToolBar->AddTool(ID_ControlToolFontDecrease, "Decrease", IconHelpers::LoadPngBitmap16("/icons/minus.png"));
     controlsToolBar->SetToolShortHelp(ID_ControlToolFontDecrease, "Decrease font size");
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { ChangeFontSize(false); }, ID_ControlToolFontDecrease);
 
-    controlsToolBar->AddTool(ID_ControlToolFontIncrease, "Increase", IconHelpers::LoadPngBitmap("/icons/plus.png", 16, 16));
+    controlsToolBar->AddTool(ID_ControlToolFontIncrease, "Increase", IconHelpers::LoadPngBitmap16("/icons/plus.png"));
     controlsToolBar->SetToolShortHelp(ID_ControlToolFontIncrease, "Increase font size");
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { ChangeFontSize(true); }, ID_ControlToolFontIncrease);
 
@@ -63,38 +63,38 @@ wxToolBar* LoggerWindow::MakeControlsToolBar(wxWindow* parent)
     return controlsToolBar;
 }
 
-void LoggerWindow::ChangeFontSize(bool increase)
+void LogWindow::ChangeFontSize(bool increase)
 {
-    auto font = _loggerController->TextLogger()->GetFont();
+    auto font = _logController->TextLog()->GetFont();
     font.SetFractionalPointSize(font.GetFractionalPointSize() + (increase ? 1.0 : -1.0));
-    _loggerController->TextLogger()->SetFont(font);
+    _logController->TextLog()->SetFont(font);
 }
 
-void LoggerWindow::onWindowClose(wxCloseEvent& event)
+void LogWindow::onWindowClose(wxCloseEvent& event)
 {
     Show(false);
     wxPostEvent(_parent, event);
 }
 
-void LoggerWindow::SaveSettings()
+void LogWindow::SaveSettings()
 {
     wxConfigBase* config = wxConfigBase::Get();
-    config->SetPath("/LoggerWindow");
+    config->SetPath("/LogWindow");
 
     config->Write("Width", GetSize().GetWidth());
     config->Write("Height", GetSize().GetHeight());
 }
 
-void LoggerWindow::LoadSettings()
+void LogWindow::LoadSettings()
 {
     wxConfigBase* config = wxConfigBase::Get();
-    config->SetPath("/LoggerWindow");
+    config->SetPath("/LogWindow");
 
     int width;
-    config->Read("Width", &width, 1920);
+    config->Read("Width", &width, 480);
 
     int height;
-    config->Read("Height", &height, 1080);
+    config->Read("Height", &height, 240);
 
     SetSize(width, height);
 }

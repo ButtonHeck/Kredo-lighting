@@ -9,7 +9,7 @@ namespace Kredo
 {
 
 class OpenGLWindow;
-class LoggerWindow;
+class LogWindow;
 
 class MainWindow : public wxFrame
 {
@@ -33,7 +33,7 @@ private:
     wxSplitterWindow* const _mainSplitter;
 
     OpenGLWindow* const _openglWindow;
-    LoggerWindow* const _loggerWindow;
+    LogWindow* const _logWindow;
 };
 
 }

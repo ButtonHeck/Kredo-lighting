@@ -1,4 +1,4 @@
-#include "logger_window.h"
+#include "log_window.h"
 #include "main_window.h"
 #include "opengl_window.h"
 #include "icon_helpers.h"
@@ -36,7 +36,7 @@ MainWindow::MainWindow()
     , _toolBar(new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize))
     , _mainSplitter(new wxSplitterWindow(this, ID_SplitterMain, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE))
     , _openglWindow(new OpenGLWindow(_mainSplitter, ID_WindowMain))
-    , _loggerWindow(new LoggerWindow(this, ID_WindowLog))
+    , _logWindow(new LogWindow(this, ID_WindowLog))
 {
     SetupWindow();
     SetupToolBar();
@@ -65,7 +65,7 @@ void MainWindow::SetupWindow()
 
 void MainWindow::SetupToolBar()
 {
-    _toolBar->AddCheckTool(ID_ToolLog, "Log", IconHelpers::LoadPngBitmap("icons/notebook.png", 16, 16), wxBitmapBundle(), "Log");
+    _toolBar->AddCheckTool(ID_ToolLog, "Log", IconHelpers::LoadPngBitmap16("icons/notebook.png"), wxBitmapBundle(), "Log");
 
     _toolBar->Realize();
     SetToolBar(_toolBar);
@@ -78,7 +78,7 @@ void MainWindow::ToggleLogWindow(wxCommandEvent& event)
 {
     const auto tool = _toolBar->FindById(event.GetId());
     if (tool)
-        _loggerWindow->Show(tool->IsToggled());
+        _logWindow->Show(tool->IsToggled());
 }
 
 void MainWindow::OnWindowCreated(wxWindowCreateEvent& event)

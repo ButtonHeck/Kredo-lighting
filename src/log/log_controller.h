@@ -8,20 +8,20 @@ class wxTextCtrl;
 namespace Kredo
 {
 
-class LoggerController : public wxLog
+class LogController : public wxLog
 {
 public:
-    LoggerController(wxTextCtrl* textLogger);
+    LogController(wxTextCtrl* textLogger);
 
-    wxTextCtrl* TextLogger() const;
+    wxTextCtrl* TextLog() const;
     void Clear();
 
 protected:
     void DoLogTextAtLevel(wxLogLevel level, const wxString& msg);
 
 private:
-    wxTextCtrl* const _textLogger;
-    wxFFile _fileLogger;
+    wxTextCtrl* const _textLog;
+    wxFFile _fileLog;
 };
 
 }
