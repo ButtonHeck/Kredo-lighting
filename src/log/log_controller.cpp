@@ -1,7 +1,6 @@
 #include "log_controller.h"
 
 #include <wx/textctrl.h>
-#include <filesystem>
 
 namespace Kredo
 {
@@ -9,11 +8,7 @@ namespace Kredo
 LogController::LogController(wxTextCtrl* textLog)
     : _textLog(textLog)
 {
-    const wxString wxPath = wxString::Format("%s/%s", KREDO_CONFIG_DIR, "log.txt");
-    std::filesystem::path path(std::string(wxPath.mb_str()));
-    std::filesystem::create_directories(path.parent_path());
-
-    if (!_fileLog.Open(wxPath, "w"))
+    if (!_fileLog.Open(wxString::Format("%s/%s", KREDO_CONFIG_DIR, "log.txt"), "w"))
         wxLogWarning("Could not open file logger");
 }
 
