@@ -18,7 +18,6 @@ public:
 
 private:
     wxToolBar* MakeControlsToolBar(wxWindow* parent);
-    void ChangeFontSize(bool increase);
     void onWindowClose(wxCloseEvent& event);
 
     void SaveSettings();

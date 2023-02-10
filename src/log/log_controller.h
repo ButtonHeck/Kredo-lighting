@@ -11,10 +11,11 @@ namespace Kredo
 class LogController : public wxLog
 {
 public:
-    LogController(wxTextCtrl* textLogger);
+    LogController(wxWindow* window);
 
     wxTextCtrl* TextLog() const;
     void Clear();
+    void ChangeFontSize(bool increase);
 
 protected:
     void DoLogTextAtLevel(wxLogLevel level, const wxString& msg);

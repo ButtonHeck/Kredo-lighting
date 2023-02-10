@@ -1,8 +1,7 @@
 #include "log_window.h"
-#include "log_controller.h"
 #include "icon_helpers.h"
+#include "log_controller.h"
 
-#include <wx/font.h>
 #include <wx/sizer.h>
 #include <wx/toolbar.h>
 #include <wx/textctrl.h>
@@ -20,9 +19,9 @@ enum ControlToolID
 };
 
 LogWindow::LogWindow(wxWindow* parent, int id)
-    : wxFrame(parent, id, "Log window", wxDefaultPosition, wxSize(480, 240))
+    : wxFrame(parent, id, "Log window", wxDefaultPosition, wxSize(800, 400))
     , _parent(parent)
-    , _logController(new LogController(new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY)))
+    , _logController(new LogController(this))
 {
     wxLog::SetActiveTarget(_logController);
 
@@ -30,7 +29,7 @@ LogWindow::LogWindow(wxWindow* parent, int id)
     sizer->Add(MakeControlsToolBar(this), 0);
     sizer->Add(_logController->TextLog(), 1, wxEXPAND);
 
-    SetMinSize(wxSize(480, 240));
+    SetMinSize(wxSize(800, 400));
     SetSizer(sizer);
 
     Bind(wxEVT_CLOSE_WINDOW, &LogWindow::onWindowClose, this);
@@ -53,21 +52,14 @@ wxToolBar* LogWindow::MakeControlsToolBar(wxWindow* parent)
 
     controlsToolBar->AddTool(ID_ControlToolFontDecrease, "Decrease", IconHelpers::LoadPngBitmap16("/icons/minus.png"));
     controlsToolBar->SetToolShortHelp(ID_ControlToolFontDecrease, "Decrease font size");
-    Bind(wxEVT_TOOL, [=](wxCommandEvent&) { ChangeFontSize(false); }, ID_ControlToolFontDecrease);
+    Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->ChangeFontSize(false); }, ID_ControlToolFontDecrease);
 
     controlsToolBar->AddTool(ID_ControlToolFontIncrease, "Increase", IconHelpers::LoadPngBitmap16("/icons/plus.png"));
     controlsToolBar->SetToolShortHelp(ID_ControlToolFontIncrease, "Increase font size");
-    Bind(wxEVT_TOOL, [=](wxCommandEvent&) { ChangeFontSize(true); }, ID_ControlToolFontIncrease);
+    Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->ChangeFontSize(true); }, ID_ControlToolFontIncrease);
 
     controlsToolBar->Realize();
     return controlsToolBar;
-}
-
-void LogWindow::ChangeFontSize(bool increase)
-{
-    auto font = _logController->TextLog()->GetFont();
-    font.SetFractionalPointSize(font.GetFractionalPointSize() + (increase ? 1.0 : -1.0));
-    _logController->TextLog()->SetFont(font);
 }
 
 void LogWindow::onWindowClose(wxCloseEvent& event)
@@ -91,10 +83,10 @@ void LogWindow::LoadSettings()
     config->SetPath("/LogWindow");
 
     int width;
-    config->Read("Width", &width, 480);
+    config->Read("Width", &width, 800);
 
     int height;
-    config->Read("Height", &height, 240);
+    config->Read("Height", &height, 400);
 
     SetSize(width, height);
 }
