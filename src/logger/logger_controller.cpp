@@ -9,7 +9,7 @@ namespace Kredo
 LoggerController::LoggerController(wxTextCtrl* textLogger)
     : _textLogger(textLogger)
 {
-    const wxString wxPath = wxString::Format("%s/%s", KREDO_CONFIG_DIR, "log");
+    const wxString wxPath = wxString::Format("%s/%s", KREDO_CONFIG_DIR, "log.txt");
     std::filesystem::path path(std::string(wxPath.mb_str()));
     std::filesystem::create_directories(path.parent_path());
 

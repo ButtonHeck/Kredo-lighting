@@ -6,6 +6,7 @@
 #include <wx/sizer.h>
 #include <wx/toolbar.h>
 #include <wx/textctrl.h>
+#include <wx/confbase.h>
 
 namespace Kredo
 {
@@ -33,6 +34,13 @@ LoggerWindow::LoggerWindow(wxWindow* parent, int id)
     SetSizer(sizer);
 
     Bind(wxEVT_CLOSE_WINDOW, &LoggerWindow::onWindowClose, this);
+
+    LoadSettings();
+}
+
+LoggerWindow::~LoggerWindow()
+{
+    SaveSettings();
 }
 
 wxToolBar* LoggerWindow::MakeControlsToolBar(wxWindow* parent)
@@ -66,6 +74,29 @@ void LoggerWindow::onWindowClose(wxCloseEvent& event)
 {
     Show(false);
     wxPostEvent(_parent, event);
+}
+
+void LoggerWindow::SaveSettings()
+{
+    wxConfigBase* config = wxConfigBase::Get();
+    config->SetPath("/LoggerWindow");
+
+    config->Write("Width", GetSize().GetWidth());
+    config->Write("Height", GetSize().GetHeight());
+}
+
+void LoggerWindow::LoadSettings()
+{
+    wxConfigBase* config = wxConfigBase::Get();
+    config->SetPath("/LoggerWindow");
+
+    int width;
+    config->Read("Width", &width, 1920);
+
+    int height;
+    config->Read("Height", &height, 1080);
+
+    SetSize(width, height);
 }
 
 }

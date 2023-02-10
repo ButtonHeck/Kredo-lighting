@@ -7,6 +7,7 @@
 #include <wx/splitter.h>
 #include <wx/panel.h>
 #include <wx/toolbar.h>
+#include <wx/confbase.h>
 
 namespace Kredo
 {
@@ -44,6 +45,13 @@ MainWindow::MainWindow()
     testPanel->SetBackgroundColour(wxColor(255,128,128));
 
     _mainSplitter->SplitVertically(_openglWindow, testPanel, GetSize().GetWidth() * 0.75);
+
+    LoadSettings();
+}
+
+MainWindow::~MainWindow()
+{
+    SaveSettings();
 }
 
 void MainWindow::SetupWindow()
@@ -80,6 +88,35 @@ void MainWindow::OnWindowCreated(wxWindowCreateEvent& event)
     _mainSplitter->SetSashGravity(1.0);
 
     SetFocus();
+}
+
+void MainWindow::SaveSettings()
+{
+    wxConfigBase* config = wxConfigBase::Get();
+    config->SetPath("/MainWindow");
+
+    config->Write("Width", GetSize().GetWidth());
+    config->Write("Height", GetSize().GetHeight());
+    config->Write("MainSpliterSashRatio", float(_mainSplitter->GetSashPosition()) / GetSize().GetWidth());
+}
+
+void MainWindow::LoadSettings()
+{
+    wxConfigBase* config = wxConfigBase::Get();
+    config->SetPath("/MainWindow");
+
+    int width;
+    config->Read("Width", &width, 1920);
+
+    int height;
+    config->Read("Height", &height, 1080);
+
+    SetSize(width, height);
+
+    float mainSplitterSashRatio;
+    config->Read("MainSpliterSashRatio", &mainSplitterSashRatio, 0.75);
+
+    _mainSplitter->SetSashPosition(GetSize().GetWidth() * mainSplitterSashRatio);
 }
 
 }

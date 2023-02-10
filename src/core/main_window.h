@@ -15,12 +15,17 @@ class MainWindow : public wxFrame
 {
 public:
     MainWindow();
+    ~MainWindow();
 
 private:
     void SetupWindow();
     void SetupToolBar();
     void ToggleLogWindow(wxCommandEvent& event);
     void OnWindowCreated(wxWindowCreateEvent& event);
+
+private:
+    void SaveSettings();
+    void LoadSettings();
 
 private:
     wxToolBar* const _toolBar;

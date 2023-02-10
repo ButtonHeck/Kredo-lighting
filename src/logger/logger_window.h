@@ -14,11 +14,15 @@ class LoggerWindow : public wxFrame
 {
 public:
     LoggerWindow(wxWindow* parent, int id);
+    ~LoggerWindow();
 
 private:
     wxToolBar* MakeControlsToolBar(wxWindow* parent);
     void ChangeFontSize(bool increase);
     void onWindowClose(wxCloseEvent& event);
+
+    void SaveSettings();
+    void LoadSettings();
 
 private:
     wxWindow* const _parent;
