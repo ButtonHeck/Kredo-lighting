@@ -19,6 +19,7 @@ public:
 private:
     void SetupToolBar();
     void DefaultState();
+    void AddMessageFilterTool(int id, const char* name, const char* help, const char* iconPath, int level);
 
     void onWindowClose(wxCloseEvent& event);
     void onWindowShown(wxShowEvent& event);

@@ -14,10 +14,17 @@ enum ToolID
     ID_ToolClear = wxID_HIGHEST + 1,
     ID_ToolFontDecrease,
     ID_ToolFontIncrease,
-    ID_ToolAlwaysOnTop,
+
+    ID_ToolLogError,
+    ID_ToolLogWarning,
+    ID_ToolLogMessage,
+    ID_ToolLogInfo,
+    ID_ToolLogDebug,
+
     ID_ToolTransparent,
-    ID_ToolClose,
     ID_ToolOpacitySpin,
+    ID_ToolAlwaysOnTop,
+    ID_ToolClose,
     ID_ToolLast
 };
 
@@ -46,7 +53,7 @@ LogWindow::~LogWindow()
 
 void LogWindow::SetupToolBar()
 {
-    _toolBar->AddTool(ID_ToolClear, "Clear", IconHelpers::LoadPngBitmap16("/icons/broom.png"));
+    _toolBar->AddTool(ID_ToolClear, "Clear", IconHelpers::LoadPngBitmap16("/icons/clear.png"));
     _toolBar->SetToolShortHelp(ID_ToolClear, "Clear");
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->Clear(); }, ID_ToolClear);
 
@@ -57,6 +64,14 @@ void LogWindow::SetupToolBar()
     _toolBar->AddTool(ID_ToolFontIncrease, "Increase", IconHelpers::LoadPngBitmap16("/icons/plus.png"));
     _toolBar->SetToolShortHelp(ID_ToolFontIncrease, "Increase font size");
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->ChangeFontSize(true); }, ID_ToolFontIncrease);
+
+    _toolBar->AddStretchableSpace();
+
+    AddMessageFilterTool(ID_ToolLogError, "Log error", "Log error enabled", "icons/error.png", wxLOG_Error);
+    AddMessageFilterTool(ID_ToolLogWarning, "Log warning", "Log warning enabled", "icons/warning.png", wxLOG_Warning);
+    AddMessageFilterTool(ID_ToolLogMessage, "Log message", "Log message enabled", "icons/message.png", wxLOG_Message);
+    AddMessageFilterTool(ID_ToolLogInfo, "Log info", "Log info enabled", "icons/info.png", wxLOG_Info);
+    AddMessageFilterTool(ID_ToolLogDebug, "Log debug", "Log debug enabled", "icons/bug.png", wxLOG_Debug);
 
     _toolBar->AddStretchableSpace();
 
@@ -85,6 +100,18 @@ void LogWindow::DefaultState()
     _toolBar->ToggleTool(ID_ToolTransparent, false);
     SetTransparent(255);
     SetWindowStyleFlag(wxDEFAULT_FRAME_STYLE);
+}
+
+void LogWindow::AddMessageFilterTool(int id, const char* name, const char* help, const char* iconPath, int level)
+{
+    _toolBar->AddCheckTool(id, name, IconHelpers::LoadPngBitmap16(iconPath));
+    _toolBar->ToggleTool(id, true);
+    _toolBar->SetToolShortHelp(id, help);
+    Bind(wxEVT_TOOL, [=](wxCommandEvent&) {
+        const auto tool = _toolBar->FindById(id);
+        if (tool)
+            _logController->SetLogLevelActive(level, tool->IsToggled());
+    }, id);
 }
 
 void LogWindow::onWindowClose(wxCloseEvent& event)

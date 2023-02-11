@@ -9,6 +9,8 @@ namespace Kredo
 
 LogController::LogController(wxWindow* window)
     : _textLog(new wxTextCtrl(window, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP))
+    , _enabledLevels({{wxLOG_FatalError, true}, {wxLOG_Error, true}, {wxLOG_Warning, true},
+                      {wxLOG_Message, true}, {wxLOG_Info, true}, {wxLOG_Debug, true}, {wxLOG_Trace, true}})
 {
     wxLog::SetActiveTarget(this);
 
@@ -39,11 +41,15 @@ void LogController::ChangeFontSize(bool increase)
     _textLog->SetFont(font);
 }
 
+void LogController::SetLogLevelActive(wxLogLevel level, bool active)
+{
+    _enabledLevels[level] = active;
+}
+
 void LogController::DoLogTextAtLevel(wxLogLevel level, const wxString& msg)
 {
-    WXUNUSED(level)
-
-    _textLog->AppendText(msg + '\n');
+    if (_enabledLevels[level])
+        _textLog->AppendText(msg + '\n');
 
     if (_fileLog.IsOpened())
         _fileLog.Write(msg + '\n');
