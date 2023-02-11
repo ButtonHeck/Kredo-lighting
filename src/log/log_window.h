@@ -18,10 +18,12 @@ public:
 
 private:
     void SetupToolBar();
+    void DefaultState();
 
     void onWindowClose(wxCloseEvent& event);
     void onWindowShown(wxShowEvent& event);
     void OnToolAlwaysOnTop(wxCommandEvent& event);
+    void OnToolTransparency(wxCommandEvent& event);
 
     void SaveSettings();
     void LoadSettings();

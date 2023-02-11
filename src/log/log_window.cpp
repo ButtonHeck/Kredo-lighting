@@ -14,16 +14,19 @@ enum ToolID
     ID_ToolFontDecrease,
     ID_ToolFontIncrease,
     ID_ToolAlwaysOnTop,
+    ID_ToolTransparent,
+    ID_ToolClose,
     ID_ToolLast
 };
 
 LogWindow::LogWindow(wxWindow* parent, int id)
-    : wxFrame(parent, id, "Log window", wxDefaultPosition, wxSize(800, 400))
+    : wxFrame(parent, id, "Log window", wxDefaultPosition, wxSize(800, 400), wxFRAME_NO_TASKBAR)
     , _parent(parent)
     , _logController(new LogController(this))
-    , _toolBar(new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_DEFAULT_STYLE))
+    , _toolBar(new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize))
 {
     SetMinSize(wxSize(800, 400));
+    SetTransparent(255);
     SetupToolBar();
 
     Bind(wxEVT_CLOSE_WINDOW, &LogWindow::onWindowClose, this);
@@ -53,18 +56,33 @@ void LogWindow::SetupToolBar()
 
     _toolBar->AddStretchableSpace();
 
+    _toolBar->AddCheckTool(ID_ToolTransparent, "Toggle transparency", IconHelpers::LoadPngBitmap16("icons/transparency.png"));
+    _toolBar->SetToolShortHelp(ID_ToolTransparent, "Toggle transparency");
+    Bind(wxEVT_TOOL, &LogWindow::OnToolTransparency, this, ID_ToolTransparent);
+
     _toolBar->AddCheckTool(ID_ToolAlwaysOnTop, "Always on top", IconHelpers::LoadPngBitmap16("/icons/thumbtack.png"));
     _toolBar->SetToolShortHelp(ID_ToolAlwaysOnTop, "Always on top");
     Bind(wxEVT_TOOL, &LogWindow::OnToolAlwaysOnTop, this, ID_ToolAlwaysOnTop);
+
+    _toolBar->AddTool(ID_ToolClose, "Close", IconHelpers::LoadPngBitmap16("/icons/close.png"));
+    _toolBar->SetToolShortHelp(ID_ToolClose, "Close");
+    Bind(wxEVT_TOOL, [=](wxCommandEvent&) { Close(); }, ID_ToolClose);
 
     _toolBar->Realize();
     SetToolBar(_toolBar);
 }
 
-void LogWindow::onWindowClose(wxCloseEvent& event)
+void LogWindow::DefaultState()
 {
     _toolBar->ToggleTool(ID_ToolAlwaysOnTop, false);
+    _toolBar->ToggleTool(ID_ToolTransparent, false);
+    SetTransparent(255);
     SetWindowStyleFlag(wxDEFAULT_FRAME_STYLE);
+}
+
+void LogWindow::onWindowClose(wxCloseEvent& event)
+{
+    DefaultState();
     Show(false);
     wxPostEvent(_parent, event);
 }
@@ -72,8 +90,7 @@ void LogWindow::onWindowClose(wxCloseEvent& event)
 void LogWindow::onWindowShown(wxShowEvent& event)
 {
     WXUNUSED(event)
-    _toolBar->ToggleTool(ID_ToolAlwaysOnTop, false);
-    SetWindowStyleFlag(wxDEFAULT_FRAME_STYLE);
+    DefaultState();
 }
 
 void LogWindow::OnToolAlwaysOnTop(wxCommandEvent& event)
@@ -81,6 +98,13 @@ void LogWindow::OnToolAlwaysOnTop(wxCommandEvent& event)
     const auto tool = _toolBar->FindById(event.GetId());
     if (tool)
         SetWindowStyleFlag(tool->IsToggled() ? wxDEFAULT_FRAME_STYLE | wxSTAY_ON_TOP : wxDEFAULT_FRAME_STYLE);
+}
+
+void LogWindow::OnToolTransparency(wxCommandEvent& event)
+{
+    const auto tool = _toolBar->FindById(event.GetId());
+    if (tool)
+        SetTransparent(tool->IsToggled() ? 128 : 255);
 }
 
 void LogWindow::SaveSettings()
