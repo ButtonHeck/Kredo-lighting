@@ -4,6 +4,7 @@
 
 #include <wx/toolbar.h>
 #include <wx/confbase.h>
+#include <wx/spinctrl.h>
 
 namespace Kredo
 {
@@ -16,6 +17,7 @@ enum ToolID
     ID_ToolAlwaysOnTop,
     ID_ToolTransparent,
     ID_ToolClose,
+    ID_ToolOpacitySpin,
     ID_ToolLast
 };
 
@@ -24,6 +26,8 @@ LogWindow::LogWindow(wxWindow* parent, int id)
     , _parent(parent)
     , _logController(new LogController(this))
     , _toolBar(new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize))
+    , _opacitySpin(new wxSpinCtrl(_toolBar, ID_ToolOpacitySpin, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+                                  wxSP_ARROW_KEYS, 10, 100, 100))
 {
     SetMinSize(wxSize(800, 400));
     SetTransparent(255);
@@ -59,6 +63,9 @@ void LogWindow::SetupToolBar()
     _toolBar->AddCheckTool(ID_ToolTransparent, "Toggle transparency", IconHelpers::LoadPngBitmap16("icons/transparency.png"));
     _toolBar->SetToolShortHelp(ID_ToolTransparent, "Toggle transparency");
     Bind(wxEVT_TOOL, &LogWindow::OnToolTransparency, this, ID_ToolTransparent);
+
+    _opacitySpin->Bind(wxEVT_SPINCTRL, &LogWindow::OnToolOpacitySpin, this);
+    _toolBar->AddControl(_opacitySpin, "Opacity");
 
     _toolBar->AddCheckTool(ID_ToolAlwaysOnTop, "Always on top", IconHelpers::LoadPngBitmap16("/icons/thumbtack.png"));
     _toolBar->SetToolShortHelp(ID_ToolAlwaysOnTop, "Always on top");
@@ -104,7 +111,14 @@ void LogWindow::OnToolTransparency(wxCommandEvent& event)
 {
     const auto tool = _toolBar->FindById(event.GetId());
     if (tool)
-        SetTransparent(tool->IsToggled() ? 128 : 255);
+        SetTransparent(tool->IsToggled() ? _opacitySpin->GetValue() * 255.0 / 100.0 : 255);
+}
+
+void LogWindow::OnToolOpacitySpin(wxSpinEvent& event)
+{
+    const auto transparentTool = _toolBar->FindById(ID_ToolTransparent);
+    if (transparentTool && transparentTool->IsToggled())
+        SetTransparent(event.GetValue() * 255.0 / 100.0);
 }
 
 void LogWindow::SaveSettings()
@@ -114,6 +128,7 @@ void LogWindow::SaveSettings()
 
     config->Write("Width", GetSize().GetWidth());
     config->Write("Height", GetSize().GetHeight());
+    config->Write("Opacity", _opacitySpin->GetValue());
 }
 
 void LogWindow::LoadSettings()
@@ -128,6 +143,10 @@ void LogWindow::LoadSettings()
     config->Read("Height", &height, 400);
 
     SetSize(width, height);
+
+    int opacity;
+    config->Read("Opacity", &opacity, 100);
+    _opacitySpin->SetValue(opacity);
 }
 
 }

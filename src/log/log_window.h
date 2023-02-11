@@ -1,9 +1,9 @@
 #pragma once
 
 #include <wx/frame.h>
-#include <wx/log.h>
 
 class wxToolBar;
+class wxSpinCtrl;
 
 namespace Kredo
 {
@@ -24,6 +24,7 @@ private:
     void onWindowShown(wxShowEvent& event);
     void OnToolAlwaysOnTop(wxCommandEvent& event);
     void OnToolTransparency(wxCommandEvent& event);
+    void OnToolOpacitySpin(wxSpinEvent& event);
 
     void SaveSettings();
     void LoadSettings();
@@ -32,6 +33,7 @@ private:
     wxWindow* const _parent;
     wxToolBar* const _toolBar;
     LogController* const _logController;
+    wxSpinCtrl* const _opacitySpin;
 };
 
 }
