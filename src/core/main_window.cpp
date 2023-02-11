@@ -66,15 +66,14 @@ void MainWindow::SetupWindow()
 void MainWindow::SetupToolBar()
 {
     _toolBar->AddCheckTool(ID_ToolLog, "Log", IconHelpers::LoadPngBitmap16("icons/notebook.png"), wxBitmapBundle(), "Log");
+    Bind(wxEVT_TOOL, &MainWindow::OnToolLogWindow, this, ID_ToolLog);
+    Bind(wxEVT_CLOSE_WINDOW, [=](wxCloseEvent&) { _toolBar->ToggleTool(ID_ToolLog, false); }, ID_WindowLog);
 
     _toolBar->Realize();
     SetToolBar(_toolBar);
-
-    Bind(wxEVT_TOOL, &MainWindow::ToggleLogWindow, this, ID_ToolLog);
-    Bind(wxEVT_CLOSE_WINDOW, [=](wxCloseEvent&) { _toolBar->ToggleTool(ID_ToolLog, false); }, ID_WindowLog);
 }
 
-void MainWindow::ToggleLogWindow(wxCommandEvent& event)
+void MainWindow::OnToolLogWindow(wxCommandEvent& event)
 {
     const auto tool = _toolBar->FindById(event.GetId());
     if (tool)

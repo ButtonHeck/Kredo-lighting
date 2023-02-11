@@ -20,7 +20,8 @@ public:
 private:
     void SetupWindow();
     void SetupToolBar();
-    void ToggleLogWindow(wxCommandEvent& event);
+
+    void OnToolLogWindow(wxCommandEvent& event);
     void OnWindowCreated(wxWindowCreateEvent& event);
 
 private:

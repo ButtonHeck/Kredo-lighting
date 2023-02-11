@@ -17,14 +17,18 @@ public:
     ~LogWindow();
 
 private:
-    wxToolBar* MakeControlsToolBar(wxWindow* parent);
+    void SetupToolBar();
+
     void onWindowClose(wxCloseEvent& event);
+    void onWindowShown(wxShowEvent& event);
+    void OnToolAlwaysOnTop(wxCommandEvent& event);
 
     void SaveSettings();
     void LoadSettings();
 
 private:
     wxWindow* const _parent;
+    wxToolBar* const _toolBar;
     LogController* const _logController;
 };
 

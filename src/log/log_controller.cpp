@@ -10,6 +10,8 @@ namespace Kredo
 LogController::LogController(wxWindow* window)
     : _textLog(new wxTextCtrl(window, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP))
 {
+    wxLog::SetActiveTarget(this);
+
     if (!_fileLog.Open(wxString::Format("%s/%s", KREDO_CONFIG_DIR, "log.txt"), "w"))
         wxLogWarning("Could not open file logger");
 
