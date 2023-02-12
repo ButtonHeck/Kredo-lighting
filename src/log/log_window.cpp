@@ -2,9 +2,12 @@
 #include "icon_helpers.h"
 #include "log_controller.h"
 
+#include <wx/sizer.h>
+#include <wx/button.h>
 #include <wx/toolbar.h>
 #include <wx/confbase.h>
 #include <wx/spinctrl.h>
+#include <wx/textctrl.h>
 
 namespace Kredo
 {
@@ -25,16 +28,21 @@ enum ToolID
     ID_ToolOpacitySpin,
     ID_ToolAlwaysOnTop,
     ID_ToolClose,
+
+    ID_ToolMove,
+    ID_ToolResize,
+
     ID_ToolLast
 };
 
 LogWindow::LogWindow(wxWindow* parent, int id)
-    : wxFrame(parent, id, "Log window", wxDefaultPosition, wxSize(800, 400), wxFRAME_NO_TASKBAR)
+    : wxFrame(parent, id, "Log window", wxDefaultPosition, wxSize(800, 400), wxSIMPLE_BORDER | wxFRAME_NO_TASKBAR)
     , _parent(parent)
     , _logController(new LogController(this))
     , _toolBar(new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize))
     , _opacitySpin(new wxSpinCtrl(_toolBar, ID_ToolOpacitySpin, wxEmptyString, wxDefaultPosition, wxDefaultSize,
                                   wxSP_ARROW_KEYS, 10, 100, 100))
+    , _mouseTrack(0, 0)
 {
     SetMinSize(wxSize(800, 400));
     SetTransparent(255);
@@ -42,6 +50,27 @@ LogWindow::LogWindow(wxWindow* parent, int id)
 
     Bind(wxEVT_CLOSE_WINDOW, &LogWindow::onWindowClose, this);
     Bind(wxEVT_SHOW, &LogWindow::onWindowShown, this);
+
+    wxButton* moveButton = new wxButton(this, ID_ToolMove, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_NOTEXT | wxBU_EXACTFIT | wxBORDER_NONE);
+    moveButton->SetBitmap(IconHelpers::LoadPngBitmap16("/icons/move.png"));
+    moveButton->SetToolTip("Move");
+    moveButton->Bind(wxEVT_LEFT_DOWN, &LogWindow::OnMouseDown, this);
+    moveButton->Bind(wxEVT_MOTION, &LogWindow::OnButtonMove, this);
+
+    wxButton* resizeButton = new wxButton(this, ID_ToolResize, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_NOTEXT | wxBU_EXACTFIT | wxBORDER_NONE);
+    resizeButton->SetBitmap(IconHelpers::LoadPngBitmap16("/icons/resize.png"));
+    resizeButton->SetToolTip("Resize");
+    resizeButton->Bind(wxEVT_LEFT_DOWN, &LogWindow::OnMouseDown, this);
+    resizeButton->Bind(wxEVT_MOTION, &LogWindow::OnButtonResize, this);
+
+    wxSizer* auxButtonsSizer = new wxBoxSizer(wxHORIZONTAL);
+    auxButtonsSizer->Add(moveButton, 0);
+    auxButtonsSizer->Add(resizeButton, 0);
+
+    wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+    sizer->Add(_logController->TextLog(), 1, wxEXPAND);
+    sizer->Add(auxButtonsSizer, 0, wxALIGN_RIGHT);
+    SetSizer(sizer);
 
     LoadSettings();
 }
@@ -146,6 +175,32 @@ void LogWindow::OnToolOpacitySpin(wxSpinEvent& event)
     const auto transparentTool = _toolBar->FindById(ID_ToolTransparent);
     if (transparentTool && transparentTool->IsToggled())
         SetTransparent(event.GetValue() * 255.0 / 100.0);
+}
+
+void LogWindow::OnButtonMove(wxMouseEvent& event)
+{
+    if (!event.Dragging())
+        return;
+
+    const auto currentMousePos = wxGetMousePosition();
+    SetPosition(GetPosition() + wxPoint(currentMousePos.x - _mouseTrack.x, currentMousePos.y - _mouseTrack.y));
+    _mouseTrack = currentMousePos;
+}
+
+void LogWindow::OnButtonResize(wxMouseEvent& event)
+{
+    if (!event.Dragging())
+        return;
+
+    const auto currentMousePos = wxGetMousePosition();
+    SetSize(GetSize().x + currentMousePos.x - _mouseTrack.x, GetSize().y + currentMousePos.y - _mouseTrack.y);
+    _mouseTrack = currentMousePos;
+}
+
+void LogWindow::OnMouseDown(wxMouseEvent& event)
+{
+    WXUNUSED(event)
+    wxGetMousePosition(&_mouseTrack.x, &_mouseTrack.y);
 }
 
 void LogWindow::SaveSettings()

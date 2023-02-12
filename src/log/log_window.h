@@ -26,6 +26,9 @@ private:
     void OnToolAlwaysOnTop(wxCommandEvent& event);
     void OnToolTransparency(wxCommandEvent& event);
     void OnToolOpacitySpin(wxSpinEvent& event);
+    void OnButtonMove(wxMouseEvent& event);
+    void OnButtonResize(wxMouseEvent& event);
+    void OnMouseDown(wxMouseEvent& event);
 
     void SaveSettings();
     void LoadSettings();
@@ -35,6 +38,7 @@ private:
     wxToolBar* const _toolBar;
     LogController* const _logController;
     wxSpinCtrl* const _opacitySpin;
+    wxPoint _mouseTrack;
 };
 
 }
