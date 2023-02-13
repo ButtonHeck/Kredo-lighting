@@ -5,7 +5,7 @@
 
 namespace Kredo
 {
-namespace IconHelpers
+namespace Icons
 {
 
 wxBitmap LoadPngBitmap(const wxString& path, int width = -1, int height = -1);

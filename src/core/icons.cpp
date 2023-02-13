@@ -1,8 +1,8 @@
-#include "icon_helpers.h"
+#include "icons.h"
 
 namespace Kredo
 {
-namespace IconHelpers
+namespace Icons
 {
 
 wxBitmap LoadPngBitmap(const wxString& path, int width, int height)

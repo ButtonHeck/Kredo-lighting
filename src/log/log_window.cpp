@@ -1,5 +1,5 @@
+#include "icons.h"
 #include "log_window.h"
-#include "icon_helpers.h"
 #include "log_controller.h"
 
 #include <wx/sizer.h>
@@ -52,13 +52,13 @@ LogWindow::LogWindow(wxWindow* parent, int id)
     Bind(wxEVT_SHOW, &LogWindow::onWindowShown, this);
 
     wxButton* moveButton = new wxButton(this, ID_ToolMove, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_NOTEXT | wxBU_EXACTFIT | wxBORDER_NONE);
-    moveButton->SetBitmap(IconHelpers::LoadPngBitmap16("/icons/move.png"));
+    moveButton->SetBitmap(Icons::LoadPngBitmap16("/icons/move.png"));
     moveButton->SetToolTip(_("Move"));
     moveButton->Bind(wxEVT_LEFT_DOWN, &LogWindow::OnMouseDown, this);
     moveButton->Bind(wxEVT_MOTION, &LogWindow::OnButtonMove, this);
 
     wxButton* resizeButton = new wxButton(this, ID_ToolResize, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_NOTEXT | wxBU_EXACTFIT | wxBORDER_NONE);
-    resizeButton->SetBitmap(IconHelpers::LoadPngBitmap16("/icons/resize.png"));
+    resizeButton->SetBitmap(Icons::LoadPngBitmap16("/icons/resize.png"));
     resizeButton->SetToolTip(_("Resize"));
     resizeButton->Bind(wxEVT_LEFT_DOWN, &LogWindow::OnMouseDown, this);
     resizeButton->Bind(wxEVT_MOTION, &LogWindow::OnButtonResize, this);
@@ -82,15 +82,15 @@ LogWindow::~LogWindow()
 
 void LogWindow::SetupToolBar()
 {
-    _toolBar->AddTool(ID_ToolClear, "Clear", IconHelpers::LoadPngBitmap16("/icons/clear.png"));
+    _toolBar->AddTool(ID_ToolClear, "Clear", Icons::LoadPngBitmap16("/icons/clear.png"));
     _toolBar->SetToolShortHelp(ID_ToolClear, _("Clear"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->Clear(); }, ID_ToolClear);
 
-    _toolBar->AddTool(ID_ToolFontDecrease, "Decrease", IconHelpers::LoadPngBitmap16("/icons/minus.png"));
+    _toolBar->AddTool(ID_ToolFontDecrease, "Decrease", Icons::LoadPngBitmap16("/icons/minus.png"));
     _toolBar->SetToolShortHelp(ID_ToolFontDecrease, _("Decrease font size"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->ChangeFontSize(false); }, ID_ToolFontDecrease);
 
-    _toolBar->AddTool(ID_ToolFontIncrease, "Increase", IconHelpers::LoadPngBitmap16("/icons/plus.png"));
+    _toolBar->AddTool(ID_ToolFontIncrease, "Increase", Icons::LoadPngBitmap16("/icons/plus.png"));
     _toolBar->SetToolShortHelp(ID_ToolFontIncrease, _("Increase font size"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->ChangeFontSize(true); }, ID_ToolFontIncrease);
 
@@ -104,18 +104,18 @@ void LogWindow::SetupToolBar()
 
     _toolBar->AddStretchableSpace();
 
-    _toolBar->AddCheckTool(ID_ToolTransparent, "Toggle transparency", IconHelpers::LoadPngBitmap16("icons/transparency.png"));
+    _toolBar->AddCheckTool(ID_ToolTransparent, "Toggle transparency", Icons::LoadPngBitmap16("icons/transparency.png"));
     _toolBar->SetToolShortHelp(ID_ToolTransparent, _("Toggle transparency"));
     Bind(wxEVT_TOOL, &LogWindow::OnToolTransparency, this, ID_ToolTransparent);
 
     _opacitySpin->Bind(wxEVT_SPINCTRL, &LogWindow::OnToolOpacitySpin, this);
     _toolBar->AddControl(_opacitySpin, "Opacity");
 
-    _toolBar->AddCheckTool(ID_ToolAlwaysOnTop, "Always on top", IconHelpers::LoadPngBitmap16("/icons/thumbtack.png"));
+    _toolBar->AddCheckTool(ID_ToolAlwaysOnTop, "Always on top", Icons::LoadPngBitmap16("/icons/thumbtack.png"));
     _toolBar->SetToolShortHelp(ID_ToolAlwaysOnTop, _("Always on top"));
     Bind(wxEVT_TOOL, &LogWindow::OnToolAlwaysOnTop, this, ID_ToolAlwaysOnTop);
 
-    _toolBar->AddTool(ID_ToolClose, "Close", IconHelpers::LoadPngBitmap16("/icons/close.png"));
+    _toolBar->AddTool(ID_ToolClose, "Close", Icons::LoadPngBitmap16("/icons/close.png"));
     _toolBar->SetToolShortHelp(ID_ToolClose, _("Close"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { Close(); }, ID_ToolClose);
 
@@ -133,7 +133,7 @@ void LogWindow::DefaultState()
 
 void LogWindow::AddMessageFilterTool(int id, const char* name, const char* help, const char* iconPath, int level)
 {
-    _toolBar->AddCheckTool(id, name, IconHelpers::LoadPngBitmap16(iconPath));
+    _toolBar->AddCheckTool(id, name, Icons::LoadPngBitmap16(iconPath));
     _toolBar->ToggleTool(id, true);
     _toolBar->SetToolShortHelp(id, help);
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) {
