@@ -65,7 +65,7 @@ void MainWindow::SetupWindow()
 
 void MainWindow::SetupToolBar()
 {
-    _toolBar->AddCheckTool(ID_ToolLog, "Log", IconHelpers::LoadPngBitmap16("icons/notebook.png"), wxBitmapBundle(), "Log");
+    _toolBar->AddCheckTool(ID_ToolLog, "Log", IconHelpers::LoadPngBitmap16("icons/notebook.png"), wxBitmapBundle(), _("Log window"));
     Bind(wxEVT_TOOL, &MainWindow::OnToolLogWindow, this, ID_ToolLog);
     Bind(wxEVT_CLOSE_WINDOW, [=](wxCloseEvent&) { _toolBar->ToggleTool(ID_ToolLog, false); }, ID_WindowLog);
 

@@ -36,7 +36,7 @@ enum ToolID
 };
 
 LogWindow::LogWindow(wxWindow* parent, int id)
-    : wxFrame(parent, id, "Log window", wxDefaultPosition, wxSize(800, 400), wxSIMPLE_BORDER | wxFRAME_NO_TASKBAR)
+    : wxFrame(parent, id, _("Log window"), wxDefaultPosition, wxSize(800, 400), wxSIMPLE_BORDER | wxFRAME_NO_TASKBAR)
     , _parent(parent)
     , _logController(new LogController(this))
     , _toolBar(new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize))
@@ -53,13 +53,13 @@ LogWindow::LogWindow(wxWindow* parent, int id)
 
     wxButton* moveButton = new wxButton(this, ID_ToolMove, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_NOTEXT | wxBU_EXACTFIT | wxBORDER_NONE);
     moveButton->SetBitmap(IconHelpers::LoadPngBitmap16("/icons/move.png"));
-    moveButton->SetToolTip("Move");
+    moveButton->SetToolTip(_("Move"));
     moveButton->Bind(wxEVT_LEFT_DOWN, &LogWindow::OnMouseDown, this);
     moveButton->Bind(wxEVT_MOTION, &LogWindow::OnButtonMove, this);
 
     wxButton* resizeButton = new wxButton(this, ID_ToolResize, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_NOTEXT | wxBU_EXACTFIT | wxBORDER_NONE);
     resizeButton->SetBitmap(IconHelpers::LoadPngBitmap16("/icons/resize.png"));
-    resizeButton->SetToolTip("Resize");
+    resizeButton->SetToolTip(_("Resize"));
     resizeButton->Bind(wxEVT_LEFT_DOWN, &LogWindow::OnMouseDown, this);
     resizeButton->Bind(wxEVT_MOTION, &LogWindow::OnButtonResize, this);
 
@@ -96,27 +96,27 @@ void LogWindow::SetupToolBar()
 
     _toolBar->AddStretchableSpace();
 
-    AddMessageFilterTool(ID_ToolLogError, "Log error", "Log error enabled", "icons/error.png", wxLOG_Error);
-    AddMessageFilterTool(ID_ToolLogWarning, "Log warning", "Log warning enabled", "icons/warning.png", wxLOG_Warning);
-    AddMessageFilterTool(ID_ToolLogMessage, "Log message", "Log message enabled", "icons/message.png", wxLOG_Message);
-    AddMessageFilterTool(ID_ToolLogInfo, "Log info", "Log info enabled", "icons/info.png", wxLOG_Info);
-    AddMessageFilterTool(ID_ToolLogDebug, "Log debug", "Log debug enabled", "icons/bug.png", wxLOG_Debug);
+    AddMessageFilterTool(ID_ToolLogError, "Log error", _("Log error enabled"), "icons/error.png", wxLOG_Error);
+    AddMessageFilterTool(ID_ToolLogWarning, "Log warning", _("Log warning enabled"), "icons/warning.png", wxLOG_Warning);
+    AddMessageFilterTool(ID_ToolLogMessage, "Log message", _("Log message enabled"), "icons/message.png", wxLOG_Message);
+    AddMessageFilterTool(ID_ToolLogInfo, "Log info", _("Log info enabled"), "icons/info.png", wxLOG_Info);
+    AddMessageFilterTool(ID_ToolLogDebug, "Log debug", _("Log debug enabled"), "icons/bug.png", wxLOG_Debug);
 
     _toolBar->AddStretchableSpace();
 
     _toolBar->AddCheckTool(ID_ToolTransparent, "Toggle transparency", IconHelpers::LoadPngBitmap16("icons/transparency.png"));
-    _toolBar->SetToolShortHelp(ID_ToolTransparent, "Toggle transparency");
+    _toolBar->SetToolShortHelp(ID_ToolTransparent, _("Toggle transparency"));
     Bind(wxEVT_TOOL, &LogWindow::OnToolTransparency, this, ID_ToolTransparent);
 
     _opacitySpin->Bind(wxEVT_SPINCTRL, &LogWindow::OnToolOpacitySpin, this);
     _toolBar->AddControl(_opacitySpin, "Opacity");
 
     _toolBar->AddCheckTool(ID_ToolAlwaysOnTop, "Always on top", IconHelpers::LoadPngBitmap16("/icons/thumbtack.png"));
-    _toolBar->SetToolShortHelp(ID_ToolAlwaysOnTop, "Always on top");
+    _toolBar->SetToolShortHelp(ID_ToolAlwaysOnTop, _("Always on top"));
     Bind(wxEVT_TOOL, &LogWindow::OnToolAlwaysOnTop, this, ID_ToolAlwaysOnTop);
 
     _toolBar->AddTool(ID_ToolClose, "Close", IconHelpers::LoadPngBitmap16("/icons/close.png"));
-    _toolBar->SetToolShortHelp(ID_ToolClose, "Close");
+    _toolBar->SetToolShortHelp(ID_ToolClose, _("Close"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { Close(); }, ID_ToolClose);
 
     _toolBar->Realize();

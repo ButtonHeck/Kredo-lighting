@@ -43,9 +43,14 @@ add_executable(${PROJECT_NAME} ${KREDO_SOURCES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE KREDO_RESOURCES_DIR="${KREDO_RESOURCES_DIR}")
 target_compile_definitions(${PROJECT_NAME} PRIVATE KREDO_CONFIG_DIR="$ENV{HOME}/.local/share/${PROJECT_NAME}")
 
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/locale" "${CMAKE_CURRENT_BINARY_DIR}/locale"
+)
+
 
 # Installation
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/locale" DESTINATION bin)
 
 
 # Submodules

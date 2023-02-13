@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-13 10:15+0300\n"
+"POT-Creation-Date: 2023-02-13 10:53+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,14 +17,78 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../../src/log/log_window.cpp:86
+#: src/core/main_window.cpp:68 src/log/log_window.cpp:39
+msgid "Log window"
+msgstr "Окно логов"
+
+#: src/opengl/opengl_canvas.cpp:68
+msgid "Kredo requires an OpenGL 4.5 capable driver!"
+msgstr "Kredo необходим OpenGL версии 4.5"
+
+#: src/opengl/opengl_canvas.cpp:68
+msgid "OpenGL canvas error"
+msgstr "Ошибка окна OpenGL"
+
+#: src/opengl/opengl_canvas.cpp:83
+msgid "Error: OpenGL manager failed to initialize"
+msgstr "Ошибка: менеджер OpenGL не смог быть инициализирован"
+
+#: src/opengl/opengl_canvas.cpp:83
+msgid "OpenGL initialization error"
+msgstr "Ошибка инициализации OpenGL"
+
+#: src/log/log_controller.cpp:18
+msgid "Could not open file logger"
+msgstr "Ошибка открытия файла логов"
+
+#: src/log/log_window.cpp:56
+msgid "Move"
+msgstr "Переместить"
+
+#: src/log/log_window.cpp:62
+msgid "Resize"
+msgstr "Изменить размер"
+
+#: src/log/log_window.cpp:86
 msgid "Clear"
 msgstr "Очистить"
 
-#: ../../src/log/log_window.cpp:90
+#: src/log/log_window.cpp:90
 msgid "Decrease font size"
 msgstr "Уменьшить шрифт"
 
-#: ../../src/log/log_window.cpp:94
+#: src/log/log_window.cpp:94
 msgid "Increase font size"
 msgstr "Увеличить шрифт"
+
+#: src/log/log_window.cpp:99
+msgid "Log error enabled"
+msgstr "Вывод ошибок"
+
+#: src/log/log_window.cpp:100
+msgid "Log warning enabled"
+msgstr "Вывод предупреждений"
+
+#: src/log/log_window.cpp:101
+msgid "Log message enabled"
+msgstr "Вывод сообщений"
+
+#: src/log/log_window.cpp:102
+msgid "Log info enabled"
+msgstr "Вывод информационных сообщений"
+
+#: src/log/log_window.cpp:103
+msgid "Log debug enabled"
+msgstr "Отладочный вывод"
+
+#: src/log/log_window.cpp:108
+msgid "Toggle transparency"
+msgstr "Переключить прозрачность"
+
+#: src/log/log_window.cpp:115
+msgid "Always on top"
+msgstr "Поверх других окон"
+
+#: src/log/log_window.cpp:119
+msgid "Close"
+msgstr "Закрыть"

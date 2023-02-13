@@ -15,7 +15,7 @@ LogController::LogController(wxWindow* window)
     wxLog::SetActiveTarget(this);
 
     if (!_fileLog.Open(wxString::Format("%s/%s", KREDO_CONFIG_DIR, "log.txt"), "w"))
-        wxLogWarning("Could not open file logger");
+        wxLogWarning(_("Could not open file logger"));
 
     SetFormatter(new LogFormatter);
 

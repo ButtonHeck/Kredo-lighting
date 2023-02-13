@@ -65,7 +65,7 @@ void OpenGLCanvas::InitializeContext()
 
     if (!_context->IsOK())
     {
-        wxMessageBox("Kredo requires an OpenGL 4.5 capable driver!", "OpenGL canvas error", wxOK, this);
+        wxMessageBox(_("Kredo requires an OpenGL 4.5 capable driver!"), _("OpenGL canvas error"), wxOK, this);
         _context.release();
     }
 }
@@ -80,7 +80,7 @@ bool OpenGLCanvas::InitializeManager()
     _manager.reset(new OpenGLManager());
     if (!_manager->IsInitialized())
     {
-        wxMessageBox("Error: OpenGL manager failed to initialize", "OpenGL initialization error", wxOK, this);
+        wxMessageBox(_("Error: OpenGL manager failed to initialize"), _("OpenGL initialization error"), wxOK, this);
         return false;
     }
 
