@@ -83,15 +83,15 @@ LogWindow::~LogWindow()
 void LogWindow::SetupToolBar()
 {
     _toolBar->AddTool(ID_ToolClear, "Clear", IconHelpers::LoadPngBitmap16("/icons/clear.png"));
-    _toolBar->SetToolShortHelp(ID_ToolClear, "Clear");
+    _toolBar->SetToolShortHelp(ID_ToolClear, _("Clear"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->Clear(); }, ID_ToolClear);
 
     _toolBar->AddTool(ID_ToolFontDecrease, "Decrease", IconHelpers::LoadPngBitmap16("/icons/minus.png"));
-    _toolBar->SetToolShortHelp(ID_ToolFontDecrease, "Decrease font size");
+    _toolBar->SetToolShortHelp(ID_ToolFontDecrease, _("Decrease font size"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->ChangeFontSize(false); }, ID_ToolFontDecrease);
 
     _toolBar->AddTool(ID_ToolFontIncrease, "Increase", IconHelpers::LoadPngBitmap16("/icons/plus.png"));
-    _toolBar->SetToolShortHelp(ID_ToolFontIncrease, "Increase font size");
+    _toolBar->SetToolShortHelp(ID_ToolFontIncrease, _("Increase font size"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->ChangeFontSize(true); }, ID_ToolFontIncrease);
 
     _toolBar->AddStretchableSpace();

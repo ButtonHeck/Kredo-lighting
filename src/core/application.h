@@ -9,6 +9,9 @@ class Application : public wxApp
 {
 public:
     virtual bool OnInit() override;
+
+private:
+    bool LoadTranslations();
 };
 
 }
