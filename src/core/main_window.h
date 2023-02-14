@@ -20,9 +20,11 @@ public:
 private:
     void SetupWindow();
     void SetupToolBar();
+    void SetupMenu();
 
     void OnToolLogWindow(wxCommandEvent& event);
     void OnWindowCreated(wxWindowCreateEvent& event);
+    void OnAbout(wxCommandEvent& event);
 
 private:
     void SaveSettings();

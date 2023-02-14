@@ -4,10 +4,12 @@
 #include "opengl_window.h"
 #include "Kredo-lighting-Config.h"
 
-#include <wx/splitter.h>
+#include <wx/menu.h>
 #include <wx/panel.h>
 #include <wx/toolbar.h>
+#include <wx/splitter.h>
 #include <wx/confbase.h>
+#include <wx/aboutdlg.h>
 
 namespace Kredo
 {
@@ -31,6 +33,13 @@ enum ToolBarID
     ID_ToolLast
 };
 
+enum MenuID
+{
+    ID_MenuExit = ID_ToolLast + 1,
+    ID_MenuAbout,
+    ID_MenuLast
+};
+
 MainWindow::MainWindow()
     : wxFrame(nullptr, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(1920, 1080), wxDEFAULT_FRAME_STYLE)
     , _toolBar(new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize))
@@ -40,6 +49,7 @@ MainWindow::MainWindow()
 {
     SetupWindow();
     SetupToolBar();
+    SetupMenu();
 
     wxPanel* testPanel = new wxPanel(_mainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     testPanel->SetBackgroundColour(wxColor(255,128,128));
@@ -73,6 +83,24 @@ void MainWindow::SetupToolBar()
     SetToolBar(_toolBar);
 }
 
+void MainWindow::SetupMenu()
+{
+    wxMenu* menuFile = new wxMenu();
+
+    menuFile->Append(ID_MenuExit, _("Exit"));
+    Bind(wxEVT_MENU, [=](wxCommandEvent&) { Close(true); }, ID_MenuExit);
+
+    wxMenu* menuAbout = new wxMenu();
+    menuAbout->Append(ID_MenuAbout, _("About"));
+    Bind(wxEVT_MENU, &MainWindow::OnAbout, this, ID_MenuAbout);
+
+    wxMenuBar* menu = new wxMenuBar();
+    menu->Append(menuFile, _("File"));
+    menu->Append(menuAbout, _("About"));
+
+    SetMenuBar(menu);
+}
+
 void MainWindow::OnToolLogWindow(wxCommandEvent& event)
 {
     const auto tool = _toolBar->FindById(event.GetId());
@@ -87,6 +115,20 @@ void MainWindow::OnWindowCreated(wxWindowCreateEvent& event)
     _mainSplitter->SetSashGravity(1.0);
 
     SetFocus();
+}
+
+void MainWindow::OnAbout(wxCommandEvent&)
+{
+    wxAboutDialogInfo aboutInfo;
+    aboutInfo.SetName("Kredo lighting sandbox");
+    aboutInfo.SetVersion(wxString::Format(_("Version %d.%d"), KREDO_LIGHTING_VERSION_MAJOR, KREDO_LIGHTING_VERSION_MINOR));
+    aboutInfo.SetDescription(_("OpenGL 4.5 demo sandbox using wxWidgets 3.3.0"));
+    aboutInfo.SetCopyright("(C) 2023");
+    aboutInfo.SetWebSite("https://github.com/ButtonHeck/Kredo-lighting");
+    aboutInfo.AddDeveloper(_("Ilya Malgin"));
+    aboutInfo.SetIcon(Icons::LoadPngIcon("/icons/kredo_logo.png"));
+
+    wxAboutBox(aboutInfo);
 }
 
 void MainWindow::SaveSettings()
