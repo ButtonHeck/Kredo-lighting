@@ -2,6 +2,7 @@
 #include "opengl_manager.h"
 #include "opengl_window.h"
 
+#include <wx/log.h>
 #include <wx/msgdlg.h>
 #include <wx/dcclient.h>
 
@@ -12,46 +13,17 @@ OpenGLCanvas::OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow*
     : wxGLCanvas(parent, canvasAttributes, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
     , _context(nullptr)
     , _manager(nullptr)
+    , _renderLoop(false)
+    , _mouseCapture(0, 0)
 {
     Bind(wxEVT_PAINT, &OpenGLCanvas::OnPaint, this);
     Bind(wxEVT_SIZE, &OpenGLCanvas::OnSize, this);
+    Bind(wxEVT_KEY_DOWN, &OpenGLCanvas::OnKeyDown, this);
+    Bind(wxEVT_KEY_UP, &OpenGLCanvas::OnKeyUp, this);
+    Bind(wxEVT_RIGHT_DOWN, &OpenGLCanvas::OnMouseRightDown, this);
+    Bind(wxEVT_MOTION, &OpenGLCanvas::OnMouseMove, this);
 
     InitializeContext();
-}
-
-void OpenGLCanvas::OnPaint(wxPaintEvent& event)
-{
-    wxPaintDC dc(this);
-    WXUNUSED(dc);
-    WXUNUSED(event);
-
-    if (!_manager)
-        return;
-
-    SetCurrent(*_context);
-    _manager->Render();
-    SwapBuffers();
-}
-
-void OpenGLCanvas::OnSize(wxSizeEvent& event)
-{
-    event.Skip();
-
-    if (!IsShownOnScreen())
-        return;
-
-    if (!_manager)
-    {
-        if (!InitializeManager())
-            return;
-    }
-
-    const auto size = event.GetSize() * GetContentScaleFactor();
-    wxLogDebug("OpenGL canvas onSize [%dx%d]", size.GetWidth(), size.GetHeight());
-
-    SetCurrent(*_context);
-    _manager->SetSize(size.x, size.y);
-    Refresh(false);
 }
 
 void OpenGLCanvas::InitializeContext()
@@ -86,6 +58,99 @@ bool OpenGLCanvas::InitializeManager()
 
     wxLogInfo("OpenGL manager and functions successfully initialized");
     return true;
+}
+
+void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
+{
+    if (on && !_renderLoop)
+    {
+        Bind(wxEVT_IDLE, wxIdleEventHandler(OpenGLCanvas::OnIdle), this);
+        _renderLoop = true;
+        _mouseCapture = capturePosition;
+        CaptureMouse();
+    }
+    else if (!on && _renderLoop)
+    {
+        Unbind(wxEVT_IDLE, wxIdleEventHandler(OpenGLCanvas::OnIdle), this);
+        _renderLoop = false;
+        ReleaseMouse();
+        WarpPointer(_mouseCapture.x, _mouseCapture.y);
+    }
+}
+
+void OpenGLCanvas::Render()
+{
+    if (!_manager)
+        return;
+
+    SetCurrent(*_context);
+    _manager->Render();
+    SwapBuffers();
+}
+
+void OpenGLCanvas::OnPaint(wxPaintEvent& event)
+{
+    WXUNUSED(event);
+
+    Render();
+}
+
+void OpenGLCanvas::OnSize(wxSizeEvent& event)
+{
+    event.Skip();
+
+    if (!IsShownOnScreen())
+        return;
+
+    if (!_manager)
+    {
+        if (!InitializeManager())
+            return;
+    }
+
+    const auto size = event.GetSize() * GetContentScaleFactor();
+    wxLogDebug("OpenGL canvas onSize [%dx%d]", size.GetWidth(), size.GetHeight());
+
+    SetCurrent(*_context);
+    _manager->SetSize(size.x, size.y);
+    Refresh(false);
+}
+
+void OpenGLCanvas::OnKeyDown(wxKeyEvent& event)
+{
+    if (_renderLoop)
+        _manager->AddKeyEvent(event);
+}
+
+void OpenGLCanvas::OnKeyUp(wxKeyEvent& event)
+{
+    if (_renderLoop)
+        _manager->AddKeyEvent(event);
+}
+
+void OpenGLCanvas::OnIdle(wxIdleEvent& event)
+{
+    static int frame = 0;
+    if (_renderLoop)
+    {
+        wxLogInfo("Frame %d", frame++);
+        _manager->ProcessEvents();
+        Render();
+        event.RequestMore();
+    }
+}
+
+void OpenGLCanvas::OnMouseRightDown(wxMouseEvent& event)
+{
+    SetFocus();
+    ActivateRenderLoop(!_renderLoop, event.GetPosition());
+    SetCursor(_renderLoop ? wxCursor(wxCURSOR_BLANK) : wxCursor(*wxSTANDARD_CURSOR));
+}
+
+void OpenGLCanvas::OnMouseMove(wxMouseEvent& event)
+{
+    if (_renderLoop)
+        _manager->AddMouseEvent(event);
 }
 
 }

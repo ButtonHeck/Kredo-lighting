@@ -13,8 +13,9 @@ public:
     OpenGLWindow(wxWindow* parent, int id);
 
 private:
-    void OnSize(wxSizeEvent& event);
     void InitializeCanvas();
+
+    void OnSize(wxSizeEvent& event);
 
 private:
     OpenGLCanvas* _openglCanvas;

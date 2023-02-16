@@ -15,14 +15,6 @@ OpenGLWindow::OpenGLWindow(wxWindow* parent, int id)
     InitializeCanvas();
 }
 
-void OpenGLWindow::OnSize(wxSizeEvent& event)
-{
-    const auto size = event.GetSize() * GetContentScaleFactor();
-    wxLogDebug("OpenGL window onSize [%dx%d]", size.GetWidth(), size.GetHeight());
-
-    _openglCanvas->SetSize(size);
-}
-
 void OpenGLWindow::InitializeCanvas()
 {
     wxGLAttributes openglAttributes;
@@ -31,6 +23,14 @@ void OpenGLWindow::InitializeCanvas()
 
     if (accepted)
         _openglCanvas = new OpenGLCanvas(openglAttributes, this);
+}
+
+void OpenGLWindow::OnSize(wxSizeEvent& event)
+{
+    const auto size = event.GetSize() * GetContentScaleFactor();
+    wxLogDebug("OpenGL window onSize [%dx%d]", size.GetWidth(), size.GetHeight());
+
+    _openglCanvas->SetSize(size);
 }
 
 }
