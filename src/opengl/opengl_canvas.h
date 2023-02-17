@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/glcanvas.h>
+#include <wx/timer.h>
 #include <memory>
 
 namespace Kredo
@@ -25,15 +26,16 @@ private:
     void OnSize(wxSizeEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnKeyUp(wxKeyEvent& event);
-    void OnIdle(wxIdleEvent& event);
     void OnMouseRightDown(wxMouseEvent& event);
     void OnMouseMove(wxMouseEvent& event);
+    void OnTimer(wxTimerEvent& event);
 
 private:
     std::unique_ptr<wxGLContext> _context;
     std::unique_ptr<OpenGLManager> _manager;
     bool _renderLoop;
     wxPoint _mouseCapture;
+    wxTimer _renderTimer;
 };
 
 }

@@ -23,6 +23,8 @@ OpenGLCanvas::OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow*
     Bind(wxEVT_RIGHT_DOWN, &OpenGLCanvas::OnMouseRightDown, this);
     Bind(wxEVT_MOTION, &OpenGLCanvas::OnMouseMove, this);
 
+    _renderTimer.Bind(wxEVT_TIMER, &OpenGLCanvas::OnTimer, this);
+
     InitializeContext();
 }
 
@@ -64,17 +66,17 @@ void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
 {
     if (on && !_renderLoop)
     {
-        Bind(wxEVT_IDLE, wxIdleEventHandler(OpenGLCanvas::OnIdle), this);
         _renderLoop = true;
         _mouseCapture = capturePosition;
+        _renderTimer.Start(1000.0 / 60.0);
         CaptureMouse();
     }
     else if (!on && _renderLoop)
     {
-        Unbind(wxEVT_IDLE, wxIdleEventHandler(OpenGLCanvas::OnIdle), this);
         _renderLoop = false;
         ReleaseMouse();
         WarpPointer(_mouseCapture.x, _mouseCapture.y);
+        _renderTimer.Stop();
     }
 }
 
@@ -128,18 +130,6 @@ void OpenGLCanvas::OnKeyUp(wxKeyEvent& event)
         _manager->AddKeyEvent(event);
 }
 
-void OpenGLCanvas::OnIdle(wxIdleEvent& event)
-{
-    static int frame = 0;
-    if (_renderLoop)
-    {
-        wxLogInfo("Frame %d", frame++);
-        _manager->ProcessEvents();
-        Render();
-        event.RequestMore();
-    }
-}
-
 void OpenGLCanvas::OnMouseRightDown(wxMouseEvent& event)
 {
     SetFocus();
@@ -151,6 +141,17 @@ void OpenGLCanvas::OnMouseMove(wxMouseEvent& event)
 {
     if (_renderLoop)
         _manager->AddMouseEvent(event);
+}
+
+void OpenGLCanvas::OnTimer(wxTimerEvent& event)
+{
+    static int frame = 0;
+    if (_renderLoop)
+    {
+        wxLogInfo("Frame %d", frame++);
+        _manager->ProcessEvents();
+        Refresh(true);
+    }
 }
 
 }
