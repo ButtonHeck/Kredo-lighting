@@ -105,5 +105,6 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE ${wxWidgets_LIBRARIES}
     PRIVATE glad
     PRIVATE assimp
+    PRIVATE EGL
     PRIVATE dl
 )
