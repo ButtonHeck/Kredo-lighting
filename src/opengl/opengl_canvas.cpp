@@ -4,7 +4,8 @@
 
 #include <wx/log.h>
 #include <wx/msgdlg.h>
-#include <wx/dcclient.h>
+
+#include <EGL/egl.h>
 
 namespace Kredo
 {
@@ -50,6 +51,7 @@ bool OpenGLCanvas::InitializeManager()
         return false;
 
     SetCurrent(*_context);
+    eglSwapInterval(GetEGLDisplay(), 1);
 
     _manager.reset(new OpenGLManager());
     if (!_manager->IsInitialized())
