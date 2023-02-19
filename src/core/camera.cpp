@@ -31,7 +31,6 @@ float Camera::GetFov() const
 
 void Camera::Move(MoveDirection direction, float delta)
 {
-    wxLogDebug("Move");
     const auto velocity = delta * _moveSpeed;
 
     switch (direction)

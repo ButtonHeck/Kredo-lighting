@@ -23,6 +23,7 @@ OpenGLCanvas::OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow*
     Bind(wxEVT_KEY_UP, &OpenGLCanvas::OnKeyUp, this);
     Bind(wxEVT_RIGHT_DOWN, &OpenGLCanvas::OnMouseRightDown, this);
     Bind(wxEVT_MOTION, &OpenGLCanvas::OnMouseMove, this);
+    Bind(wxEVT_LEAVE_WINDOW, &OpenGLCanvas::OnWindowLeave, this);
 
     _renderTimer.Bind(wxEVT_TIMER, &OpenGLCanvas::OnTimer, this);
 
@@ -70,23 +71,20 @@ void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
     {
         _renderLoop = true;
         _mouseCapture = capturePosition;
+        _manager->UpdateOrigin();
         _renderTimer.Start(1000.0 / 60.0);
-        CaptureMouse();
     }
     else if (!on && _renderLoop)
     {
         _renderLoop = false;
-        ReleaseMouse();
         WarpPointer(_mouseCapture.x, _mouseCapture.y);
+        _manager->ClearEvents();
         _renderTimer.Stop();
     }
 }
 
 void OpenGLCanvas::Render()
 {
-    if (!_manager)
-        return;
-
     SetCurrent(*_context);
     _manager->ProcessEvents();
     _manager->Render();
@@ -150,11 +148,36 @@ void OpenGLCanvas::OnMouseMove(wxMouseEvent& event)
 void OpenGLCanvas::OnTimer(wxTimerEvent& event)
 {
     WXUNUSED(event)
-    static int frame = 0;
+    if (_renderLoop)
+        Refresh(true);
+}
+
+void OpenGLCanvas::OnWindowLeave(wxMouseEvent& event)
+{
     if (_renderLoop)
     {
-        wxLogInfo("Frame %d", frame++);
-        Refresh(true);
+        const auto size = GetSize();
+
+        if (event.GetX() <= 0)
+        {
+            WarpPointer(size.GetWidth(), event.GetY());
+            _manager->UpdateOrigin();
+        }
+        else if (event.GetX() >= size.GetWidth())
+        {
+            WarpPointer(0, event.GetY());
+            _manager->UpdateOrigin();
+        }
+        else if (event.GetY() <= 0)
+        {
+            WarpPointer(event.GetX(), size.GetHeight());
+            _manager->UpdateOrigin();
+        }
+        else if (event.GetY() >= size.GetHeight())
+        {
+            WarpPointer(event.GetX(), 0);
+            _manager->UpdateOrigin();
+        }
     }
 }
 

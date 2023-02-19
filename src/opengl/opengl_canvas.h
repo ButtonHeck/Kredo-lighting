@@ -29,6 +29,7 @@ private:
     void OnMouseRightDown(wxMouseEvent& event);
     void OnMouseMove(wxMouseEvent& event);
     void OnTimer(wxTimerEvent& event);
+    void OnWindowLeave(wxMouseEvent& event);
 
 private:
     std::unique_ptr<wxGLContext> _context;
