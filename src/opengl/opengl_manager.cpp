@@ -41,6 +41,7 @@ OpenGLManager::OpenGLManager()
     , _height(0)
     , _mouseX(0)
     , _mouseY(0)
+    , _hasMouseMove(0)
 {
     _initialized = gladLoadGL() != 0;
     if (_initialized)
@@ -118,66 +119,47 @@ bool OpenGLManager::IsInitialized() const
     return _initialized;
 }
 
-void OpenGLManager::AddKeyEvent(wxKeyEvent& event)
+void OpenGLManager::ProcessKeyPressed(int keyCode)
 {
-    _keyEvents.push(event);
+    _keysPressed[keyCode] = true;
 }
 
-void OpenGLManager::AddMouseEvent(wxMouseEvent& event)
+void OpenGLManager::ProcessKeyReleased(int keyCode)
 {
-    _mouseEvents.push(event);
+    _keysPressed[keyCode] = false;
+}
+
+void OpenGLManager::ProcessMouseMove()
+{
+    _hasMouseMove = true;
 }
 
 void OpenGLManager::ProcessEvents()
 {
-    if (_keyEvents.size())
+    if (_hasMouseMove)
     {
-        wxKeyEvent& event = _keyEvents.top();
-
-        if (event.GetEventType() == wxEVT_KEY_DOWN)
+        int mouseDx = 0;
+        int mouseDy = 0;
+        int x, y;
+        wxGetMousePosition(&x, &y);
+        wxLogDebug(wxString::Format("process mouse event x %d, y %d", x, y));
+        if (_firstMouseMove)
         {
-            const auto keyCode = event.GetKeyCode();
-            _keysPressed[keyCode] = true;
+            _mouseX = x;
+            _mouseY = y;
+            _firstMouseMove = false;
         }
-        else if (event.GetEventType() == wxEVT_KEY_UP)
+        else
         {
-            const auto keyCode = event.GetKeyCode();
-            _keysPressed[keyCode] = false;
+            mouseDx = x - _mouseX;
+            mouseDy = _mouseY - y;
+            _mouseX = x;
+            _mouseY = y;
         }
 
-        _keyEvents.pop();
-    }
-
-    int mouseDx = 0;
-    int mouseDy = 0;
-    if (_mouseEvents.size())
-    {
-        wxMouseEvent& event = _mouseEvents.top();
-
-        if (event.GetEventType() == wxEVT_MOTION)
-        {
-            int x, y;
-            wxGetMousePosition(&x, &y);
-            wxLogDebug(wxString::Format("process mouse event x %d, y %d", x, y));
-            if (_firstMouseMove)
-            {
-                _mouseX = x;
-                _mouseY = y;
-                _firstMouseMove = false;
-            }
-            else
-            {
-                mouseDx = x - _mouseX;
-                mouseDy = _mouseY - y;
-                _mouseX = x;
-                _mouseY = y;
-            }
-        }
-        _mouseEvents.pop();
-    }
-
-    if (mouseDx != 0 || mouseDy != 0)
         _camera.Rotate(float(mouseDx), float(mouseDy));
+        _hasMouseMove = false;
+    }
 
     if (_keysPressed['W'])
         _camera.Move(Camera::ForwardDirection, 0.1f);

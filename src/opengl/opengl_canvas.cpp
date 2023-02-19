@@ -88,6 +88,7 @@ void OpenGLCanvas::Render()
         return;
 
     SetCurrent(*_context);
+    _manager->ProcessEvents();
     _manager->Render();
     SwapBuffers();
 }
@@ -123,13 +124,13 @@ void OpenGLCanvas::OnSize(wxSizeEvent& event)
 void OpenGLCanvas::OnKeyDown(wxKeyEvent& event)
 {
     if (_renderLoop)
-        _manager->AddKeyEvent(event);
+        _manager->ProcessKeyPressed(event.GetKeyCode());
 }
 
 void OpenGLCanvas::OnKeyUp(wxKeyEvent& event)
 {
     if (_renderLoop)
-        _manager->AddKeyEvent(event);
+        _manager->ProcessKeyReleased(event.GetKeyCode());
 }
 
 void OpenGLCanvas::OnMouseRightDown(wxMouseEvent& event)
@@ -141,17 +142,18 @@ void OpenGLCanvas::OnMouseRightDown(wxMouseEvent& event)
 
 void OpenGLCanvas::OnMouseMove(wxMouseEvent& event)
 {
+    WXUNUSED(event)
     if (_renderLoop)
-        _manager->AddMouseEvent(event);
+        _manager->ProcessMouseMove();
 }
 
 void OpenGLCanvas::OnTimer(wxTimerEvent& event)
 {
+    WXUNUSED(event)
     static int frame = 0;
     if (_renderLoop)
     {
         wxLogInfo("Frame %d", frame++);
-        _manager->ProcessEvents();
         Refresh(true);
     }
 }

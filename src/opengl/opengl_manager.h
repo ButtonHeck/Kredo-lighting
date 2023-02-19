@@ -3,8 +3,6 @@
 //temp
 #include "camera.h"
 #include "shader.h"
-#include <stack>
-#include <wx/event.h>
 
 class wxKeyEvent;
 class wxMouseEvent;
@@ -21,8 +19,9 @@ public:
 
     bool IsInitialized() const;
 
-    void AddKeyEvent(wxKeyEvent& event);
-    void AddMouseEvent(wxMouseEvent& event);
+    void ProcessKeyPressed(int keyCode);
+    void ProcessKeyReleased(int keyCode);
+    void ProcessMouseMove();
 
     void ProcessEvents();
     void SetSize(int width, int height);
@@ -40,9 +39,9 @@ private:
     bool _keysPressed[WXK_WINDOWS_MENU] = {false};
     int _mouseX;
     int _mouseY;
+    bool _hasMouseMove;
     bool _firstMouseMove = true;
-    std::stack<wxKeyEvent> _keyEvents;
-    std::stack<wxMouseEvent> _mouseEvents;
+    bool _hasMouseEvent = false;
 };
 
 }
