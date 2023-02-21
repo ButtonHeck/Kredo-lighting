@@ -39,9 +39,10 @@ namespace Kredo
 OpenGLManager::OpenGLManager()
     : _width(0)
     , _height(0)
-    , _mouseX(0)
-    , _mouseY(0)
+    , _origin(0, 0)
+    , _hasMouseMove(false)
 {
+    _keysPressed.fill(false);
     _initialized = gladLoadGL() != 0;
     if (_initialized)
     {
@@ -118,66 +119,38 @@ bool OpenGLManager::IsInitialized() const
     return _initialized;
 }
 
-void OpenGLManager::AddKeyEvent(wxKeyEvent& event)
+void OpenGLManager::ProcessKeyPressed(int keyCode)
 {
-    _keyEvents.push(event);
+    _keysPressed[keyCode] = true;
 }
 
-void OpenGLManager::AddMouseEvent(wxMouseEvent& event)
+void OpenGLManager::ProcessKeyReleased(int keyCode)
 {
-    _mouseEvents.push(event);
+    _keysPressed[keyCode] = false;
+}
+
+void OpenGLManager::ProcessMouseMove()
+{
+    _hasMouseMove = true;
+}
+
+void OpenGLManager::UpdateOrigin()
+{
+    wxGetMousePosition(&_origin.x, &_origin.y);
 }
 
 void OpenGLManager::ProcessEvents()
 {
-    if (_keyEvents.size())
+    if (_hasMouseMove)
     {
-        wxKeyEvent& event = _keyEvents.top();
-
-        if (event.GetEventType() == wxEVT_KEY_DOWN)
-        {
-            const auto keyCode = event.GetKeyCode();
-            _keysPressed[keyCode] = true;
-        }
-        else if (event.GetEventType() == wxEVT_KEY_UP)
-        {
-            const auto keyCode = event.GetKeyCode();
-            _keysPressed[keyCode] = false;
-        }
-
-        _keyEvents.pop();
-    }
-
-    int mouseDx = 0;
-    int mouseDy = 0;
-    if (_mouseEvents.size())
-    {
-        wxMouseEvent& event = _mouseEvents.top();
-
-        if (event.GetEventType() == wxEVT_MOTION)
-        {
-            int x, y;
-            wxGetMousePosition(&x, &y);
-            wxLogDebug(wxString::Format("process mouse event x %d, y %d", x, y));
-            if (_firstMouseMove)
-            {
-                _mouseX = x;
-                _mouseY = y;
-                _firstMouseMove = false;
-            }
-            else
-            {
-                mouseDx = x - _mouseX;
-                mouseDy = _mouseY - y;
-                _mouseX = x;
-                _mouseY = y;
-            }
-        }
-        _mouseEvents.pop();
-    }
-
-    if (mouseDx != 0 || mouseDy != 0)
+        int x, y;
+        wxGetMousePosition(&x, &y);
+        const auto mouseDx = x - _origin.x;
+        const auto mouseDy = _origin.y - y;
+        _origin = wxPoint(x, y);
         _camera.Rotate(float(mouseDx), float(mouseDy));
+        _hasMouseMove = false;
+    }
 
     if (_keysPressed['W'])
         _camera.Move(Camera::ForwardDirection, 0.1f);
@@ -191,6 +164,12 @@ void OpenGLManager::ProcessEvents()
         _camera.Move(Camera::UpDirection, 0.1f);
     if (_keysPressed[WXK_SHIFT])
         _camera.Move(Camera::DownDirection, 0.1f);
+}
+
+void OpenGLManager::ClearEvents()
+{
+    _hasMouseMove = false;
+    _keysPressed.fill(false);
 }
 
 void OpenGLManager::SetSize(int width, int height)
