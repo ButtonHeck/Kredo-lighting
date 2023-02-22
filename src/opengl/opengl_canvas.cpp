@@ -85,7 +85,6 @@ void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
 
 void OpenGLCanvas::Render()
 {
-    SetCurrent(*_context);
     _manager->ProcessEvents();
     _manager->Render();
     SwapBuffers();
@@ -114,9 +113,8 @@ void OpenGLCanvas::OnSize(wxSizeEvent& event)
     const auto size = event.GetSize() * GetContentScaleFactor();
     wxLogDebug("OpenGL canvas onSize [%dx%d]", size.GetWidth(), size.GetHeight());
 
-    SetCurrent(*_context);
     _manager->SetSize(size.x, size.y);
-    Refresh(false);
+    Refresh();
 }
 
 void OpenGLCanvas::OnKeyDown(wxKeyEvent& event)
@@ -140,7 +138,8 @@ void OpenGLCanvas::OnMouseRightDown(wxMouseEvent& event)
 
 void OpenGLCanvas::OnMouseMove(wxMouseEvent& event)
 {
-    WXUNUSED(event)
+    event.Skip();
+
     if (_renderLoop)
         _manager->ProcessMouseMove();
 }
@@ -149,7 +148,7 @@ void OpenGLCanvas::OnTimer(wxTimerEvent& event)
 {
     WXUNUSED(event)
     if (_renderLoop)
-        Refresh(true);
+        Refresh();
 }
 
 void OpenGLCanvas::OnWindowLeave(wxMouseEvent& event)
