@@ -10,6 +10,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
     : _position(position)
     , _front(glm::vec3(0.0f, 0.0f, -1.0f))
     , _up(up)
+    , _worldUp(glm::vec3(0.0f, 1.0f, 0.0f))
     , _yaw(yaw)
     , _pitch(pitch)
     , _moveSpeed(2.5f)
@@ -52,11 +53,11 @@ void Camera::Move(MoveDirection direction, float delta)
         break;
 
     case UpDirection:
-        _position += glm::vec3(0.0f, 1.0f, 0.0f) * velocity;
+        _position += _worldUp * velocity;
         break;
 
     case DownDirection:
-        _position -= glm::vec3(0.0f, 1.0f, 0.0f) * velocity;
+        _position -= _worldUp * velocity;
         break;
 
     default:
@@ -82,12 +83,12 @@ void Camera::Update()
     const auto pitchRad = glm::radians(_pitch);
 
     glm::vec3 front;
-    front.x = cos(yawRad) * cos(pitchRad);
-    front.y = sin(pitchRad);
-    front.z = sin(yawRad) * cos(pitchRad);
+    front.x = std::cos(yawRad) * std::cos(pitchRad);
+    front.y = std::sin(pitchRad);
+    front.z = std::sin(yawRad) * std::cos(pitchRad);
 
     _front = glm::normalize(front);
-    _right = glm::normalize(glm::cross(_front, glm::vec3(0.0f, 1.0f, 0.0f)));
+    _right = glm::normalize(glm::cross(_front, _worldUp));
     _up = glm::normalize(glm::cross(_right, _front));
 }
 

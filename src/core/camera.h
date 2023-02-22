@@ -38,6 +38,7 @@ private:
     glm::vec3 _front;
     glm::vec3 _up;
     glm::vec3 _right;
+    glm::vec3 _worldUp;
 
     float _yaw;
     float _pitch;
