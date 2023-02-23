@@ -20,7 +20,7 @@ private:
     bool InitializeManager();
 
     void ActivateRenderLoop(bool on, const wxPoint& capturePosition);
-    void Render();
+    void Render(wxDC& dc);
 
     void OnPaint(wxPaintEvent& event);
     void OnSize(wxSizeEvent& event);

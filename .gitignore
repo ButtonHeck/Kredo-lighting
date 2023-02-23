@@ -1,5 +1,7 @@
 # Folders
 build/
+out/
+.vs/
 
 # CMake
 CMakeLists.txt.user

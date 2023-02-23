@@ -96,15 +96,15 @@ void LogWindow::SetupToolBar()
 
     _toolBar->AddStretchableSpace();
 
-    AddMessageFilterTool(ID_ToolLogError, "Log error", _("Log error enabled"), "icons/error.png", wxLOG_Error);
-    AddMessageFilterTool(ID_ToolLogWarning, "Log warning", _("Log warning enabled"), "icons/warning.png", wxLOG_Warning);
-    AddMessageFilterTool(ID_ToolLogMessage, "Log message", _("Log message enabled"), "icons/message.png", wxLOG_Message);
-    AddMessageFilterTool(ID_ToolLogInfo, "Log info", _("Log info enabled"), "icons/info.png", wxLOG_Info);
-    AddMessageFilterTool(ID_ToolLogDebug, "Log debug", _("Log debug enabled"), "icons/bug.png", wxLOG_Debug);
+    AddMessageFilterTool(ID_ToolLogError, "Log error", _("Log error enabled"), "/icons/error.png", wxLOG_Error);
+    AddMessageFilterTool(ID_ToolLogWarning, "Log warning", _("Log warning enabled"), "/icons/warning.png", wxLOG_Warning);
+    AddMessageFilterTool(ID_ToolLogMessage, "Log message", _("Log message enabled"), "/icons/message.png", wxLOG_Message);
+    AddMessageFilterTool(ID_ToolLogInfo, "Log info", _("Log info enabled"), "/icons/info.png", wxLOG_Info);
+    AddMessageFilterTool(ID_ToolLogDebug, "Log debug", _("Log debug enabled"), "/icons/bug.png", wxLOG_Debug);
 
     _toolBar->AddStretchableSpace();
 
-    _toolBar->AddCheckTool(ID_ToolTransparent, "Toggle transparency", Icons::LoadPngBitmap16("icons/transparency.png"));
+    _toolBar->AddCheckTool(ID_ToolTransparent, "Toggle transparency", Icons::LoadPngBitmap16("/icons/transparency.png"));
     _toolBar->SetToolShortHelp(ID_ToolTransparent, _("Toggle transparency"));
     Bind(wxEVT_TOOL, &LogWindow::OnToolTransparency, this, ID_ToolTransparent);
 

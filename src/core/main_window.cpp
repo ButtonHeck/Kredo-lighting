@@ -70,12 +70,12 @@ void MainWindow::SetupWindow()
 
     SetLabel(wxString::Format("Kredo Lighting Sandbox %d.%d", KREDO_LIGHTING_VERSION_MAJOR, KREDO_LIGHTING_VERSION_MINOR));
     SetMinSize(wxSize(1024, 768));
-    SetIcon(Icons::LoadPngIcon("icons/kredo_logo.png"));
+    SetIcon(Icons::LoadPngIcon("/icons/kredo_logo.png"));
 }
 
 void MainWindow::SetupToolBar()
 {
-    _toolBar->AddCheckTool(ID_ToolLog, "Log", Icons::LoadPngBitmap16("icons/notebook.png"), wxBitmapBundle(), _("Log window"));
+    _toolBar->AddCheckTool(ID_ToolLog, "Log", Icons::LoadPngBitmap16("/icons/notebook.png"), wxBitmapBundle(), _("Log window"));
     Bind(wxEVT_TOOL, &MainWindow::OnToolLogWindow, this, ID_ToolLog);
     Bind(wxEVT_CLOSE_WINDOW, [=](wxCloseEvent&) { _toolBar->ToggleTool(ID_ToolLog, false); }, ID_WindowLog);
 

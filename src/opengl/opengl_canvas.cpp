@@ -4,8 +4,11 @@
 
 #include <wx/log.h>
 #include <wx/msgdlg.h>
+#include <wx/dcclient.h>
 
+#ifndef __WXMSW__
 #include <EGL/egl.h>
+#endif
 
 namespace Kredo
 {
@@ -52,7 +55,10 @@ bool OpenGLCanvas::InitializeManager()
         return false;
 
     SetCurrent(*_context);
+
+#ifndef __WXMSW__
     eglSwapInterval(GetEGLDisplay(), 1);
+#endif
 
     _manager.reset(new OpenGLManager());
     if (!_manager->IsInitialized())
@@ -83,8 +89,12 @@ void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
     }
 }
 
-void OpenGLCanvas::Render()
+void OpenGLCanvas::Render(wxDC& dc)
 {
+    WXUNUSED(dc)
+    if (!_manager)
+        return;
+
     _manager->ProcessEvents();
     _manager->Render();
     SwapBuffers();
@@ -93,8 +103,9 @@ void OpenGLCanvas::Render()
 void OpenGLCanvas::OnPaint(wxPaintEvent& event)
 {
     WXUNUSED(event);
+    wxPaintDC dc(this);
 
-    Render();
+    Render(dc);
 }
 
 void OpenGLCanvas::OnSize(wxSizeEvent& event)
@@ -133,7 +144,7 @@ void OpenGLCanvas::OnMouseRightDown(wxMouseEvent& event)
 {
     SetFocus();
     ActivateRenderLoop(!_renderLoop, event.GetPosition());
-    SetCursor(_renderLoop ? wxCursor(wxCURSOR_BLANK) : wxCursor(*wxSTANDARD_CURSOR));
+    SetCursor(_renderLoop ? wxNullCursor : wxCursor(*wxSTANDARD_CURSOR));
 }
 
 void OpenGLCanvas::OnMouseMove(wxMouseEvent& event)

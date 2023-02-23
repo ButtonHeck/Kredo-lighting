@@ -3,6 +3,7 @@
 
 #include <wx/fileconf.h>
 #include "wx/uilocale.h"
+#include <wx/image.h>
 
 namespace Kredo
 {
@@ -13,6 +14,7 @@ bool Application::OnInit()
         return false;
 
     wxMkDir(KREDO_CONFIG_DIR, wxS_DIR_DEFAULT);
+    wxInitAllImageHandlers();
 
     if (!LoadTranslations())
         wxLogError("Could not load translation");

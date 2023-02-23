@@ -7,7 +7,9 @@ namespace Icons
 
 wxBitmap LoadPngBitmap(const wxString& path, int width, int height)
 {
-    wxBitmap bitmap(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, path), wxBITMAP_TYPE_PNG);
+    auto p = wxString::Format("%s%s", KREDO_RESOURCES_DIR, path);
+    std::replace(p.begin(), p.end(), '/', '\\');
+    wxBitmap bitmap(p, wxBITMAP_TYPE_PNG);
     if (width > 0 && height > 0)
     {
         wxImage image = bitmap.ConvertToImage().Rescale(width, height);
@@ -15,6 +17,7 @@ wxBitmap LoadPngBitmap(const wxString& path, int width, int height)
     }
 
     return bitmap;
+    
 }
 
 wxBitmap LoadPngBitmap16(const wxString& path)
@@ -24,7 +27,9 @@ wxBitmap LoadPngBitmap16(const wxString& path)
 
 wxIcon LoadPngIcon(const wxString& path)
 {
-    return wxIcon(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, path), wxBITMAP_TYPE_PNG);
+    auto p = wxString::Format("%s%s", KREDO_RESOURCES_DIR, path);
+    std::replace(p.begin(), p.end(), '/', '\\');
+    return wxIcon(p, wxBITMAP_TYPE_PNG);
 }
 
 }
