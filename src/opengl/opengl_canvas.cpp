@@ -144,7 +144,7 @@ void OpenGLCanvas::OnMouseRightDown(wxMouseEvent& event)
 {
     SetFocus();
     ActivateRenderLoop(!_renderLoop, event.GetPosition());
-    SetCursor(_renderLoop ? wxNullCursor : wxCursor(*wxSTANDARD_CURSOR));
+    SetCursor(wxCursor(_renderLoop ? wxCURSOR_BLANK : *wxSTANDARD_CURSOR));
 }
 
 void OpenGLCanvas::OnMouseMove(wxMouseEvent& event)
