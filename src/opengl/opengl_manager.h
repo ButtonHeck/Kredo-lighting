@@ -2,7 +2,6 @@
 
 //temp
 #include "camera.h"
-#include "shader.h"
 #include <wx/gdicmn.h>
 #include <array>
 
@@ -12,6 +11,8 @@ class wxEvent;
 
 namespace Kredo
 {
+
+class Shader;
 
 class OpenGLManager
 {
@@ -39,7 +40,7 @@ private:
     unsigned int _width, _height;
     unsigned int _vbo, _vao;
     Camera _camera;
-    Shader _shader;
+    Shader* const _shader;
 
     std::array<bool, WXK_WINDOWS_MENU> _keysPressed;
     wxPoint _origin;

@@ -1,4 +1,5 @@
 #include "icons.h"
+#include "filesystem.h"
 
 namespace Kredo
 {
@@ -7,11 +8,7 @@ namespace Icons
 
 wxBitmap LoadPngBitmap(const wxString& path, int width, int height)
 {
-    auto fullpath = wxString::Format("%s%s", KREDO_RESOURCES_DIR, path);
-#ifdef __WXMSW__
-    std::replace(p.begin(), p.end(), '/', '\\');
-#endif
-
+    const auto fullpath = Filesystem::Path(wxString::Format("%s%s", KREDO_RESOURCES_DIR, path));
     wxBitmap bitmap(fullpath, wxBITMAP_TYPE_PNG);
     if (width > 0 && height > 0)
     {
@@ -30,11 +27,7 @@ wxBitmap LoadPngBitmap16(const wxString& path)
 
 wxIcon LoadPngIcon(const wxString& path)
 {
-    auto fullpath = wxString::Format("%s%s", KREDO_RESOURCES_DIR, path);
-#ifdef __WXMSW__
-    std::replace(p.begin(), p.end(), '/', '\\');
-#endif
-
+    const auto fullpath = Filesystem::Path(wxString::Format("%s%s", KREDO_RESOURCES_DIR, path));
     return wxIcon(fullpath, wxBITMAP_TYPE_PNG);
 }
 

@@ -1,3 +1,4 @@
+#include "shader.h"
 #include "opengl_manager.h"
 
 #include <wx/log.h>
@@ -5,33 +6,6 @@
 #include <glad/glad.h>
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-//temp
-const char* shaderVs = R"glsl(
-#version 450
-
-layout (location = 0) in vec3 aPos;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-void main()
-{
-  gl_Position = projection * view * model * vec4(aPos, 1.0);
-}
-)glsl";
-
-const char* shaderFs = R"glsl(
-#version 450
-
-out vec4 FragColor;
-
-void main()
-{
-    FragColor = vec4(0.5, 1.0, 1.0, 1.0);
-}
-)glsl";
 
 namespace Kredo
 {
@@ -41,12 +15,15 @@ OpenGLManager::OpenGLManager()
     , _height(0)
     , _origin(0, 0)
     , _hasMouseMove(false)
+    , _shader(new Shader())
 {
     _keysPressed.fill(false);
     _initialized = gladLoadGL() != 0;
+
     if (_initialized)
     {
-        _shader.Initialize(shaderVs, shaderFs);
+        _shader->Load(wxString::Format("%s%s", KREDO_RESOURCES_DIR, "/shaders/basic.vs"),
+                      wxString::Format("%s%s", KREDO_RESOURCES_DIR, "/shaders/basic.fs"));
 
         glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
         glEnable(GL_DEPTH_TEST);
@@ -112,6 +89,8 @@ OpenGLManager::~OpenGLManager()
     glDeleteBuffers(1, &_vbo);
     glDeleteBuffers(1, &_vao);
     glFinish();
+
+    delete _shader;
 }
 
 bool OpenGLManager::IsInitialized() const
@@ -199,17 +178,17 @@ void OpenGLManager::Render()
       glm::vec3(-1.3f,  1.0f, -1.5f )
     };
 
-    _shader.Use();
-    _shader.SetMat4("view", _camera.GetViewMatrix());
+    _shader->Use();
+    _shader->SetMat4("view", _camera.GetViewMatrix());
 
     glm::mat4 projection = glm::perspective(glm::radians(_camera.GetFov()), float(_width) / float(_height), 0.1f, 100.0f);
-    _shader.SetMat4("projection", projection);
+    _shader->SetMat4("projection", projection);
 
     for (auto i = 0; i < 10; i++)
     {
         glm::mat4 model = glm::mat4(1.0);
         model = glm::translate(model, cubePositions[i]);
-        _shader.SetMat4("model", model);
+        _shader->SetMat4("model", model);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
