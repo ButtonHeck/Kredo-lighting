@@ -20,13 +20,14 @@ public:
     };
 
 public:
-    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 10.0f),
-           glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+    Camera(const glm::vec3& position = glm::vec3(0.0f, 0.0f, 0.0f),
+           const glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f),
            float yaw = -90.0f,
            float pitch = 0.0f);
 
     glm::mat4 GetViewMatrix() const;
     float GetFov() const;
+
     void Move(MoveDirection direction, float delta);
     void Rotate(float x, float y);
 
@@ -45,7 +46,7 @@ private:
     float _fov;
 
     float _moveSpeed;
-    float _mouseSensitivity;
+    float _rotateSensitivity;
 };
 
 }

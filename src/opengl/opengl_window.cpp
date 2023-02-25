@@ -12,16 +12,11 @@ OpenGLWindow::OpenGLWindow(wxWindow* parent, int id)
 {
     Bind(wxEVT_SIZE, &OpenGLWindow::OnSize, this);
 
-    InitializeCanvas();
-}
-
-void OpenGLWindow::InitializeCanvas()
-{
     wxGLAttributes openglAttributes;
-    openglAttributes.PlatformDefaults().RGBA().DoubleBuffer().Depth(16).EndList();
-    bool accepted = wxGLCanvas::IsDisplaySupported(openglAttributes);
+    openglAttributes.PlatformDefaults().RGBA().DoubleBuffer().Depth(24).Stencil(8).EndList();
+    const auto valid = wxGLCanvas::IsDisplaySupported(openglAttributes);
 
-    if (accepted)
+    if (valid)
         _openglCanvas = new OpenGLCanvas(openglAttributes, this);
 }
 

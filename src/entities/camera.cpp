@@ -6,7 +6,7 @@
 namespace Kredo
 {
 
-Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
+Camera::Camera(const glm::vec3& position, const glm::vec3& up, float yaw, float pitch)
     : _position(position)
     , _front(glm::vec3(0.0f, 0.0f, -1.0f))
     , _up(up)
@@ -14,7 +14,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
     , _yaw(yaw)
     , _pitch(pitch)
     , _moveSpeed(2.5f)
-    , _mouseSensitivity(0.05f)
+    , _rotateSensitivity(0.05f)
     , _fov(60.0f)
 {
     Update();
@@ -67,13 +67,12 @@ void Camera::Move(MoveDirection direction, float delta)
 
 void Camera::Rotate(float x, float y)
 {
-    x *= _mouseSensitivity;
-    y *= _mouseSensitivity;
+    x *= _rotateSensitivity;
+    y *= _rotateSensitivity;
 
     _yaw += x;
-    _pitch += y;
+    _pitch = glm::clamp(_pitch + y, -89.0f, 89.0f);
 
-    _pitch = glm::clamp(_pitch, -89.0f, 89.0f);
     Update();
 }
 
@@ -82,12 +81,9 @@ void Camera::Update()
     const auto yawRad = glm::radians(_yaw);
     const auto pitchRad = glm::radians(_pitch);
 
-    glm::vec3 front;
-    front.x = std::cos(yawRad) * std::cos(pitchRad);
-    front.y = std::sin(pitchRad);
-    front.z = std::sin(yawRad) * std::cos(pitchRad);
-
-    _front = glm::normalize(front);
+    _front = glm::normalize(glm::vec3(std::cos(yawRad) * std::cos(pitchRad),
+                                      std::sin(pitchRad),
+                                      std::sin(yawRad) * std::cos(pitchRad)));
     _right = glm::normalize(glm::cross(_front, _worldUp));
     _up = glm::normalize(glm::cross(_right, _front));
 }

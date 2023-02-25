@@ -1,4 +1,4 @@
-#include "shader.h"
+#include "opengl_shader.h"
 
 #include <wx/log.h>
 #include <wx/string.h>
@@ -9,17 +9,17 @@
 namespace Kredo
 {
 
-Shader::Shader()
+OpenGLShader::OpenGLShader()
     : _id(0)
 {
 }
 
-Shader::~Shader()
+OpenGLShader::~OpenGLShader()
 {
     Cleanup();
 }
 
-void Shader::Load(const wxString& vertexPath, const wxString& fragmentPath)
+void OpenGLShader::Load(const wxString& vertexPath, const wxString& fragmentPath)
 {
     const auto vertexShader = LoadShader(vertexPath, GL_VERTEX_SHADER);
     const auto fragmentShader = LoadShader(fragmentPath, GL_FRAGMENT_SHADER);
@@ -35,7 +35,7 @@ void Shader::Load(const wxString& vertexPath, const wxString& fragmentPath)
     glDeleteShader(fragmentShader);
 }
 
-void Shader::Load(const wxString& vertexPath, const wxString& geometryPath, const wxString& fragmentPath)
+void OpenGLShader::Load(const wxString& vertexPath, const wxString& geometryPath, const wxString& fragmentPath)
 {
     const auto vertexShader = LoadShader(vertexPath, GL_VERTEX_SHADER);
     const auto geometryShader = LoadShader(geometryPath, GL_GEOMETRY_SHADER);
@@ -54,63 +54,63 @@ void Shader::Load(const wxString& vertexPath, const wxString& geometryPath, cons
     glDeleteShader(fragmentShader);
 }
 
-void Shader::SetBool(const wxString& name, int value) const
+void OpenGLShader::SetBool(const wxString& name, int value) const
 {
     glUniform1i(glGetUniformLocation(_id, name.c_str()), value);
 }
 
-void Shader::SetInt(const wxString& name, int value) const
+void OpenGLShader::SetInt(const wxString& name, int value) const
 {
     glUniform1i(glGetUniformLocation(_id, name.c_str()), value);
 }
 
-void Shader::SetFloat(const wxString& name, float value) const
+void OpenGLShader::SetFloat(const wxString& name, float value) const
 {
     glUniform1f(glGetUniformLocation(_id, name.c_str()), value);
 }
 
-void Shader::SetVec2(const wxString& name, const glm::vec2& vec) const
+void OpenGLShader::SetVec2(const wxString& name, const glm::vec2& vec) const
 {
     SetVec2(name, vec.x, vec.y);
 }
 
-void Shader::SetVec2(const wxString& name, float x, float y) const
+void OpenGLShader::SetVec2(const wxString& name, float x, float y) const
 {
     glUniform2f(glGetUniformLocation(_id, name.c_str()), x, y);
 }
 
-void Shader::SetVec3(const wxString& name, const glm::vec3& vec) const
+void OpenGLShader::SetVec3(const wxString& name, const glm::vec3& vec) const
 {
     SetVec3(name, vec.x, vec.y, vec.z);
 }
 
-void Shader::SetVec3(const wxString& name, float x, float y, float z) const
+void OpenGLShader::SetVec3(const wxString& name, float x, float y, float z) const
 {
     glUniform3f(glGetUniformLocation(_id, name.c_str()), x, y, z);
 }
 
-void Shader::SetMat4(const wxString& name, const glm::mat4& model) const
+void OpenGLShader::SetMat4(const wxString& name, const glm::mat4& model) const
 {
     const auto loc = glGetUniformLocation(_id, name.ToStdString().c_str());
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model));
 }
 
-GLuint Shader::GetId() const
+GLuint OpenGLShader::GetId() const
 {
     return _id;
 }
 
-void Shader::Use()
+void OpenGLShader::Use()
 {
     glUseProgram(_id);
 }
 
-void Shader::Cleanup()
+void OpenGLShader::Cleanup()
 {
     glDeleteProgram(_id);
 }
 
-GLuint Shader::LoadShader(const wxString& path, GLenum type)
+GLuint OpenGLShader::LoadShader(const wxString& path, GLenum type)
 {
     wxFileStream fileStream(path);
     wxStringOutputStream stringStream;
@@ -127,7 +127,7 @@ GLuint Shader::LoadShader(const wxString& path, GLenum type)
     return shader;
 }
 
-bool Shader::CheckShader(GLuint shader)
+bool OpenGLShader::CheckShader(GLuint shader)
 {
     int status;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
@@ -142,7 +142,7 @@ bool Shader::CheckShader(GLuint shader)
     return true;
 }
 
-bool Shader::CheckProgram()
+bool OpenGLShader::CheckProgram()
 {
     int status;
     glGetProgramiv(_id, GL_LINK_STATUS, &status);

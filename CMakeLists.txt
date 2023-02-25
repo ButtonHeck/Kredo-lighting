@@ -25,6 +25,7 @@ include_directories(
     "${KREDO_SOURCES_DIR}/core"
     "${KREDO_SOURCES_DIR}/log"
     "${KREDO_SOURCES_DIR}/opengl"
+    "${KREDO_SOURCES_DIR}/entities"
     ${PROJECT_BINARY_DIR}
 )
 
@@ -35,6 +36,8 @@ file(GLOB KREDO_SOURCES
     src/log/*.cpp
     src/opengl/*.h
     src/opengl/*.cpp
+    src/entities/*.h
+    src/entities/*.cpp
 )
 
 

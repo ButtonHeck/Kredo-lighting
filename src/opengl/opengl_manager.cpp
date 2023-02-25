@@ -1,4 +1,4 @@
-#include "shader.h"
+#include "opengl_shader.h"
 #include "opengl_manager.h"
 
 #include <wx/log.h>
@@ -14,8 +14,9 @@ OpenGLManager::OpenGLManager()
     : _width(0)
     , _height(0)
     , _origin(0, 0)
+    , _camera(Camera(glm::vec3(0.0f, 0.0f, 10.0f)))
     , _hasMouseMove(false)
-    , _shader(new Shader())
+    , _shader(new OpenGLShader())
 {
     _keysPressed.fill(false);
     _initialized = gladLoadGL() != 0;
@@ -25,7 +26,6 @@ OpenGLManager::OpenGLManager()
         _shader->Load(wxString::Format("%s%s", KREDO_RESOURCES_DIR, "/shaders/basic.vs"),
                       wxString::Format("%s%s", KREDO_RESOURCES_DIR, "/shaders/basic.fs"));
 
-        glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
         glEnable(GL_DEPTH_TEST);
 
         const GLfloat vertices[] = {
@@ -181,13 +181,12 @@ void OpenGLManager::Render()
     _shader->Use();
     _shader->SetMat4("view", _camera.GetViewMatrix());
 
-    glm::mat4 projection = glm::perspective(glm::radians(_camera.GetFov()), float(_width) / float(_height), 0.1f, 100.0f);
+    const auto projection = glm::perspective(glm::radians(_camera.GetFov()), float(_width) / float(_height), 0.1f, 100.0f);
     _shader->SetMat4("projection", projection);
 
     for (auto i = 0; i < 10; i++)
     {
-        glm::mat4 model = glm::mat4(1.0);
-        model = glm::translate(model, cubePositions[i]);
+        const auto model = glm::translate(glm::mat4(1.0), cubePositions[i]);
         _shader->SetMat4("model", model);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);

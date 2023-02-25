@@ -10,11 +10,11 @@ class wxString;
 namespace Kredo
 {
 
-class Shader
+class OpenGLShader
 {
 public:
-    Shader();
-    ~Shader();
+    OpenGLShader();
+    ~OpenGLShader();
 
     void Load(const wxString& vertexPath, const wxString& fragmentPath);
     void Load(const wxString& vertexPath, const wxString& geometryPath, const wxString& fragmentPath);
