@@ -1,9 +1,10 @@
 #include "shader.h"
 
 #include <wx/log.h>
+#include <wx/string.h>
+#include <wx/sstream.h>
+#include <wx/wfstream.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <fstream>
-#include <sstream>
 
 namespace Kredo
 {
@@ -11,6 +12,11 @@ namespace Kredo
 Shader::Shader()
     : _id(0)
 {
+}
+
+Shader::~Shader()
+{
+    Cleanup();
 }
 
 void Shader::Load(const wxString& vertexPath, const wxString& fragmentPath)
@@ -23,7 +29,7 @@ void Shader::Load(const wxString& vertexPath, const wxString& fragmentPath)
     glAttachShader(_id, fragmentShader);
     glLinkProgram(_id);
     if (!CheckProgram())
-        wxLogError("Shader program link error");
+        glDeleteProgram(_id);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -41,11 +47,52 @@ void Shader::Load(const wxString& vertexPath, const wxString& geometryPath, cons
     glAttachShader(_id, fragmentShader);
     glLinkProgram(_id);
     if (!CheckProgram())
-        wxLogError("Shader program link error");
+        glDeleteProgram(_id);
 
     glDeleteShader(vertexShader);
     glDeleteShader(geometryShader);
     glDeleteShader(fragmentShader);
+}
+
+void Shader::SetBool(const wxString& name, int value) const
+{
+    glUniform1i(glGetUniformLocation(_id, name.c_str()), value);
+}
+
+void Shader::SetInt(const wxString& name, int value) const
+{
+    glUniform1i(glGetUniformLocation(_id, name.c_str()), value);
+}
+
+void Shader::SetFloat(const wxString& name, float value) const
+{
+    glUniform1f(glGetUniformLocation(_id, name.c_str()), value);
+}
+
+void Shader::SetVec2(const wxString& name, const glm::vec2& vec) const
+{
+    SetVec2(name, vec.x, vec.y);
+}
+
+void Shader::SetVec2(const wxString& name, float x, float y) const
+{
+    glUniform2f(glGetUniformLocation(_id, name.c_str()), x, y);
+}
+
+void Shader::SetVec3(const wxString& name, const glm::vec3& vec) const
+{
+    SetVec3(name, vec.x, vec.y, vec.z);
+}
+
+void Shader::SetVec3(const wxString& name, float x, float y, float z) const
+{
+    glUniform3f(glGetUniformLocation(_id, name.c_str()), x, y, z);
+}
+
+void Shader::SetMat4(const wxString& name, const glm::mat4& model) const
+{
+    const auto loc = glGetUniformLocation(_id, name.ToStdString().c_str());
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model));
 }
 
 GLuint Shader::GetId() const
@@ -58,12 +105,6 @@ void Shader::Use()
     glUseProgram(_id);
 }
 
-void Shader::SetMat4(const wxString& name, const glm::mat4 &model) const
-{
-    const auto loc = glGetUniformLocation(_id, name.ToStdString().c_str());
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model));
-}
-
 void Shader::Cleanup()
 {
     glDeleteProgram(_id);
@@ -71,18 +112,17 @@ void Shader::Cleanup()
 
 GLuint Shader::LoadShader(const wxString& path, GLenum type)
 {
-    std::fstream shaderFile(path);
-    std::stringstream shaderStringBuffer;
-    shaderStringBuffer << shaderFile.rdbuf();
-    const auto shaderString = shaderStringBuffer.str();
+    wxFileStream fileStream(path);
+    wxStringOutputStream stringStream;
+    fileStream.Read(stringStream);
+
+    const auto shaderString = stringStream.GetString().ToStdString();
     const auto shaderSource = shaderString.c_str();
 
     GLuint shader = glCreateShader(type);
     glShaderSource(shader, 1, &shaderSource, nullptr);
     glCompileShader(shader);
-
-    if (!CheckShader(shader))
-        wxLogError(wxString::Format("Error while loading shader %s", path));
+    CheckShader(shader);
 
     return shader;
 }
@@ -95,7 +135,7 @@ bool Shader::CheckShader(GLuint shader)
     {
         char log[512];
         glGetShaderInfoLog(shader, sizeof(log), nullptr, log);
-        wxLogDebug(log);
+        wxLogDebug(wxString::Format("Shader compilation error: %s", log));
         return false;
     }
 
@@ -110,7 +150,7 @@ bool Shader::CheckProgram()
     {
         char log[512];
         glGetProgramInfoLog(_id, sizeof(log), nullptr, log);
-        wxLogDebug(log);
+        wxLogDebug(wxString::Format("Program link error: %s", log));
         return false;
     }
 
