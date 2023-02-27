@@ -1,3 +1,4 @@
+#include "filesystem.h"
 #include "application.h"
 #include "main_window.h"
 
@@ -17,9 +18,9 @@ bool Application::OnInit()
     wxInitAllImageHandlers();
 
     if (!LoadTranslations())
-        wxLogError("Could not load translation");
+        wxLogError("Application: could not load translation");
 
-    wxFileConfig* config = new wxFileConfig(wxEmptyString, wxEmptyString, wxString::Format("%s/%s", KREDO_CONFIG_DIR, "config.ini"));
+    wxFileConfig* config = new wxFileConfig(wxEmptyString, wxEmptyString, Filesystem::Path(wxString::Format("%s/%s", KREDO_CONFIG_DIR, "config.ini")));
     wxConfigBase::Set(config);
 
     MainWindow* mainWindow = new MainWindow();
@@ -31,7 +32,7 @@ bool Application::OnInit()
 bool Application::LoadTranslations()
 {
     if (!wxUILocale::UseDefault())
-        wxLogWarning("Failed to initialize the default system locale.");
+        wxLogWarning("Application: failed to initialize the default system locale.");
 
     wxFileTranslationsLoader::AddCatalogLookupPathPrefix("locale");
     wxTranslations* const translation = new wxTranslations();
@@ -39,7 +40,7 @@ bool Application::LoadTranslations()
 
     if (!translation->AddCatalog("Kredo"))
     {
-        wxLogError("Couldn't find/load 'Kredo' catalog");
+        wxLogError("Application: couldn't find/load 'Kredo' catalog");
         return false;
     }
 

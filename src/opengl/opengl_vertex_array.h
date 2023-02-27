@@ -19,14 +19,14 @@ public:
     void Unbind() const;
 
     void AddVertexBuffer(const Shared<OpenGLVertexBuffer>& vertexBuffer);
-    void SetIndexBuffer(const Shared<OpenGLIndexBuffer>& indexBuffer);
-
     const std::vector<Shared<OpenGLVertexBuffer>>& GetVertexBuffers() const;
+
+    void SetIndexBuffer(const Shared<OpenGLIndexBuffer>& indexBuffer);
     const Shared<OpenGLIndexBuffer>& GetIndexBuffer() const;
 
 private:
     uint32_t _id;
-    uint32_t _vertexBufferIndex = 0;
+    uint32_t _vertexBufferIndex;
     std::vector<Shared<OpenGLVertexBuffer>> _vertexBuffers;
     Shared<OpenGLIndexBuffer> _indexBuffer;
 };

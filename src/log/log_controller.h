@@ -12,7 +12,7 @@ namespace Kredo
 class LogController : public wxLog
 {
 public:
-    LogController(wxWindow* window);
+    explicit LogController(wxWindow* window);
 
     wxTextCtrl* TextLog() const;
     void Clear();

@@ -1,6 +1,6 @@
 #include "opengl_canvas.h"
-#include "opengl_manager.h"
 #include "opengl_window.h"
+#include "opengl_manager.h"
 
 #include <wx/log.h>
 #include <wx/msgdlg.h>
@@ -35,11 +35,8 @@ OpenGLCanvas::OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow*
 
 void OpenGLCanvas::InitializeContext()
 {
-    const auto openGLMajorVersion = 4;
-    const auto openGLMinorVersion = 5;
-
     wxGLContextAttrs contextAttributes;
-    contextAttributes.PlatformDefaults().CoreProfile().OGLVersion(openGLMajorVersion, openGLMinorVersion).EndList();
+    contextAttributes.PlatformDefaults().CoreProfile().OGLVersion(4, 5).EndList();
     _context.reset(new wxGLContext(this, nullptr, &contextAttributes));
 
     if (!_context->IsOK())
@@ -67,7 +64,7 @@ bool OpenGLCanvas::InitializeManager()
         return false;
     }
 
-    wxLogInfo("OpenGL manager and functions successfully initialized");
+    wxLogInfo("OpenGLCanvas: OpenGL manager and functions successfully initialized");
     return true;
 }
 
@@ -122,7 +119,7 @@ void OpenGLCanvas::OnSize(wxSizeEvent& event)
     }
 
     const auto size = event.GetSize() * GetContentScaleFactor();
-    wxLogDebug("OpenGL canvas onSize [%dx%d]", size.GetWidth(), size.GetHeight());
+    wxLogDebug("OpenGLCanvas: onSize [%dx%d]", size.GetWidth(), size.GetHeight());
 
     _manager->SetSize(size.x, size.y);
     Refresh();
@@ -166,7 +163,7 @@ void OpenGLCanvas::OnWindowLeave(wxMouseEvent& event)
 {
     if (_renderLoop)
     {
-        const auto size = GetSize();
+        const auto size = GetSize() * GetContentScaleFactor();
 
         if (event.GetX() <= 0)
         {

@@ -6,37 +6,21 @@
 namespace Kredo
 {
 
-GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
+GLenum ToOpenGLType(ShaderDataType type)
 {
     switch (type)
     {
     case ShaderDataType::Float:
-        return GL_FLOAT;
-
     case ShaderDataType::Float2:
-        return GL_FLOAT;
-
     case ShaderDataType::Float3:
-        return GL_FLOAT;
-
     case ShaderDataType::Float4:
-        return GL_FLOAT;
-
     case ShaderDataType::Mat3:
-        return GL_FLOAT;
-
     case ShaderDataType::Mat4:
         return GL_FLOAT;
 
     case ShaderDataType::Int:
-        return GL_INT;
-
     case ShaderDataType::Int2:
-        return GL_INT;
-
     case ShaderDataType::Int3:
-        return GL_INT;
-
     case ShaderDataType::Int4:
         return GL_INT;
 
@@ -50,7 +34,9 @@ GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
     return 0;
 }
 
+
 OpenGLVertexArray::OpenGLVertexArray()
+    : _vertexBufferIndex(0)
 {
     glCreateVertexArrays(1, &_id);
 }
@@ -74,7 +60,7 @@ void OpenGLVertexArray::AddVertexBuffer(const Shared<OpenGLVertexBuffer>& vertex
 {
     if (vertexBuffer->GetLayout().GetElements().size() == 0)
     {
-        wxLogWarning("Vertex buffer has no layout");
+        wxLogWarning("OpenGLVertexArray: vertex buffer has no layout");
         return;
     }
 
@@ -94,7 +80,7 @@ void OpenGLVertexArray::AddVertexBuffer(const Shared<OpenGLVertexBuffer>& vertex
             glEnableVertexAttribArray(_vertexBufferIndex);
             glVertexAttribPointer(_vertexBufferIndex,
                                   element.GetComponentCount(),
-                                  ShaderDataTypeToOpenGLBaseType(element.type),
+                                  ToOpenGLType(element.type),
                                   element.normalized ? GL_TRUE : GL_FALSE,
                                   layout.GetStride(),
                                   (const void*)element.offset);
@@ -109,7 +95,7 @@ void OpenGLVertexArray::AddVertexBuffer(const Shared<OpenGLVertexBuffer>& vertex
         {
             glVertexAttribIPointer(_vertexBufferIndex,
                                    element.GetComponentCount(),
-                                   ShaderDataTypeToOpenGLBaseType(element.type),
+                                   ToOpenGLType(element.type),
                                    layout.GetStride(),
                                    (const void*)element.offset);
             _vertexBufferIndex++;
@@ -124,7 +110,7 @@ void OpenGLVertexArray::AddVertexBuffer(const Shared<OpenGLVertexBuffer>& vertex
                 glEnableVertexAttribArray(_vertexBufferIndex);
                 glVertexAttribPointer(_vertexBufferIndex,
                                       count,
-                                      ShaderDataTypeToOpenGLBaseType(element.type),
+                                      ToOpenGLType(element.type),
                                       element.normalized ? GL_TRUE : GL_FALSE,
                                       layout.GetStride(),
                                       (const void*)(element.offset + sizeof(float) * count * i));
@@ -136,11 +122,16 @@ void OpenGLVertexArray::AddVertexBuffer(const Shared<OpenGLVertexBuffer>& vertex
         }
 
         default:
-            wxLogWarning("Unknown shader data type");
+            wxLogWarning("OpenGLVertexArray: unknown shader data type");
         }
     }
 
     _vertexBuffers.push_back(vertexBuffer);
+}
+
+const std::vector<Shared<OpenGLVertexBuffer>>& OpenGLVertexArray::GetVertexBuffers() const
+{
+    return _vertexBuffers;
 }
 
 void OpenGLVertexArray::SetIndexBuffer(const Shared<OpenGLIndexBuffer>& indexBuffer)
@@ -148,11 +139,6 @@ void OpenGLVertexArray::SetIndexBuffer(const Shared<OpenGLIndexBuffer>& indexBuf
     glBindVertexArray(_id);
     indexBuffer->Bind();
     _indexBuffer = indexBuffer;
-}
-
-const std::vector<Shared<OpenGLVertexBuffer>>& OpenGLVertexArray::GetVertexBuffers() const
-{
-    return _vertexBuffers;
 }
 
 const Shared<OpenGLIndexBuffer>& OpenGLVertexArray::GetIndexBuffer() const

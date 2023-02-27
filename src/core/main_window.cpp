@@ -51,7 +51,7 @@ MainWindow::MainWindow()
     SetupToolBar();
     SetupMenu();
 
-    wxPanel* testPanel = new wxPanel(_mainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    const auto testPanel = new wxPanel(_mainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     testPanel->SetBackgroundColour(wxColor(255,128,128));
 
     _mainSplitter->SplitVertically(_openglWindow, testPanel, GetSize().GetWidth() * 0.75);
@@ -70,12 +70,12 @@ void MainWindow::SetupWindow()
 
     SetLabel(wxString::Format("Kredo Lighting Sandbox %d.%d", KREDO_LIGHTING_VERSION_MAJOR, KREDO_LIGHTING_VERSION_MINOR));
     SetMinSize(wxSize(1024, 768));
-    SetIcon(Icons::LoadPngIcon("/icons/kredo_logo.png"));
+    SetIcon(Icons::LoadPngIcon("icons/kredo_logo.png"));
 }
 
 void MainWindow::SetupToolBar()
 {
-    _toolBar->AddCheckTool(ID_ToolLog, "Log", Icons::LoadPngBitmap16("/icons/notebook.png"), wxBitmapBundle(), _("Log window"));
+    _toolBar->AddCheckTool(ID_ToolLog, "Log", Icons::LoadPngBitmap16("icons/notebook.png"), wxBitmapBundle(), _("Log window"));
     Bind(wxEVT_TOOL, &MainWindow::OnToolLogWindow, this, ID_ToolLog);
     Bind(wxEVT_CLOSE_WINDOW, [=](wxCloseEvent&) { _toolBar->ToggleTool(ID_ToolLog, false); }, ID_WindowLog);
 
@@ -85,16 +85,15 @@ void MainWindow::SetupToolBar()
 
 void MainWindow::SetupMenu()
 {
-    wxMenu* menuFile = new wxMenu();
-
+    const auto menuFile = new wxMenu();
     menuFile->Append(ID_MenuExit, _("Exit"));
     Bind(wxEVT_MENU, [=](wxCommandEvent&) { Close(true); }, ID_MenuExit);
 
-    wxMenu* menuAbout = new wxMenu();
+    const auto menuAbout = new wxMenu();
     menuAbout->Append(ID_MenuAbout, _("About"));
     Bind(wxEVT_MENU, &MainWindow::OnAbout, this, ID_MenuAbout);
 
-    wxMenuBar* menu = new wxMenuBar();
+    const auto menu = new wxMenuBar();
     menu->Append(menuFile, _("File"));
     menu->Append(menuAbout, _("About"));
 
@@ -126,14 +125,14 @@ void MainWindow::OnAbout(wxCommandEvent&)
     aboutInfo.SetCopyright("(C) 2023");
     aboutInfo.SetWebSite("https://github.com/ButtonHeck/Kredo-lighting");
     aboutInfo.AddDeveloper(_("Ilya Malgin"));
-    aboutInfo.SetIcon(Icons::LoadPngIcon("/icons/kredo_logo.png"));
+    aboutInfo.SetIcon(Icons::LoadPngIcon("icons/kredo_logo.png"));
 
     wxAboutBox(aboutInfo);
 }
 
 void MainWindow::SaveSettings()
 {
-    wxConfigBase* config = wxConfigBase::Get();
+    const auto config = wxConfigBase::Get();
     config->SetPath("/MainWindow");
 
     config->Write("Width", GetSize().GetWidth());
@@ -143,7 +142,7 @@ void MainWindow::SaveSettings()
 
 void MainWindow::LoadSettings()
 {
-    wxConfigBase* config = wxConfigBase::Get();
+    const auto config = wxConfigBase::Get();
     config->SetPath("/MainWindow");
 
     int width;

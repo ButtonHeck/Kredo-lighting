@@ -6,13 +6,14 @@
 namespace Kredo
 {
 
-Camera::Camera(const glm::vec3& position, const glm::vec3& up, float yaw, float pitch)
+Camera::Camera(const glm::vec3& position)
     : _position(position)
     , _front(glm::vec3(0.0f, 0.0f, -1.0f))
-    , _up(up)
+    , _right(glm::vec3(1.0f, 0.0f, 0.0f))
+    , _up(glm::vec3(0.0f, 1.0f, 0.0f))
     , _worldUp(glm::vec3(0.0f, 1.0f, 0.0f))
-    , _yaw(yaw)
-    , _pitch(pitch)
+    , _yaw(-90.0f)
+    , _pitch(0.0f)
     , _moveSpeed(2.5f)
     , _rotateSensitivity(0.05f)
     , _fov(60.0f)

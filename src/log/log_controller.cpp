@@ -1,8 +1,9 @@
+#include "filesystem.h"
 #include "log_formatter.h"
 #include "log_controller.h"
 
-#include <wx/textctrl.h>
 #include <wx/font.h>
+#include <wx/textctrl.h>
 
 namespace Kredo
 {
@@ -14,8 +15,8 @@ LogController::LogController(wxWindow* window)
 {
     wxLog::SetActiveTarget(this);
 
-    if (!_fileLog.Open(wxString::Format("%s/%s", KREDO_CONFIG_DIR, "log.txt"), "w"))
-        wxLogWarning(_("Could not open file logger"));
+    if (!_fileLog.Open(Filesystem::Path(wxString::Format("%s/%s", KREDO_CONFIG_DIR, "log.txt")), "w"))
+        wxLogWarning("LogController: could not open file logger");
 
     SetFormatter(new LogFormatter);
 

@@ -46,31 +46,12 @@ LogWindow::LogWindow(wxWindow* parent, int id)
 {
     SetMinSize(wxSize(800, 400));
     SetTransparent(255);
+
     SetupToolBar();
+    SetupLayout();
 
     Bind(wxEVT_CLOSE_WINDOW, &LogWindow::onWindowClose, this);
     Bind(wxEVT_SHOW, &LogWindow::onWindowShown, this);
-
-    wxButton* moveButton = new wxButton(this, ID_ToolMove, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_NOTEXT | wxBU_EXACTFIT | wxBORDER_NONE);
-    moveButton->SetBitmap(Icons::LoadPngBitmap16("/icons/move.png"));
-    moveButton->SetToolTip(_("Move"));
-    moveButton->Bind(wxEVT_LEFT_DOWN, &LogWindow::OnMouseDown, this);
-    moveButton->Bind(wxEVT_MOTION, &LogWindow::OnButtonMove, this);
-
-    wxButton* resizeButton = new wxButton(this, ID_ToolResize, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_NOTEXT | wxBU_EXACTFIT | wxBORDER_NONE);
-    resizeButton->SetBitmap(Icons::LoadPngBitmap16("/icons/resize.png"));
-    resizeButton->SetToolTip(_("Resize"));
-    resizeButton->Bind(wxEVT_LEFT_DOWN, &LogWindow::OnMouseDown, this);
-    resizeButton->Bind(wxEVT_MOTION, &LogWindow::OnButtonResize, this);
-
-    wxSizer* auxButtonsSizer = new wxBoxSizer(wxHORIZONTAL);
-    auxButtonsSizer->Add(moveButton, 0);
-    auxButtonsSizer->Add(resizeButton, 0);
-
-    wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-    sizer->Add(_logController->TextLog(), 1, wxEXPAND);
-    sizer->Add(auxButtonsSizer, 0, wxALIGN_RIGHT);
-    SetSizer(sizer);
 
     LoadSettings();
 }
@@ -82,45 +63,67 @@ LogWindow::~LogWindow()
 
 void LogWindow::SetupToolBar()
 {
-    _toolBar->AddTool(ID_ToolClear, "Clear", Icons::LoadPngBitmap16("/icons/clear.png"));
+    _toolBar->AddTool(ID_ToolClear, "Clear", Icons::LoadPngBitmap16("icons/clear.png"));
     _toolBar->SetToolShortHelp(ID_ToolClear, _("Clear"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->Clear(); }, ID_ToolClear);
 
-    _toolBar->AddTool(ID_ToolFontDecrease, "Decrease", Icons::LoadPngBitmap16("/icons/minus.png"));
+    _toolBar->AddTool(ID_ToolFontDecrease, "Decrease", Icons::LoadPngBitmap16("icons/minus.png"));
     _toolBar->SetToolShortHelp(ID_ToolFontDecrease, _("Decrease font size"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->ChangeFontSize(false); }, ID_ToolFontDecrease);
 
-    _toolBar->AddTool(ID_ToolFontIncrease, "Increase", Icons::LoadPngBitmap16("/icons/plus.png"));
+    _toolBar->AddTool(ID_ToolFontIncrease, "Increase", Icons::LoadPngBitmap16("icons/plus.png"));
     _toolBar->SetToolShortHelp(ID_ToolFontIncrease, _("Increase font size"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { _logController->ChangeFontSize(true); }, ID_ToolFontIncrease);
 
     _toolBar->AddStretchableSpace();
-
-    AddMessageFilterTool(ID_ToolLogError, "Log error", _("Log error enabled"), "/icons/error.png", wxLOG_Error);
-    AddMessageFilterTool(ID_ToolLogWarning, "Log warning", _("Log warning enabled"), "/icons/warning.png", wxLOG_Warning);
-    AddMessageFilterTool(ID_ToolLogMessage, "Log message", _("Log message enabled"), "/icons/message.png", wxLOG_Message);
-    AddMessageFilterTool(ID_ToolLogInfo, "Log info", _("Log info enabled"), "/icons/info.png", wxLOG_Info);
-    AddMessageFilterTool(ID_ToolLogDebug, "Log debug", _("Log debug enabled"), "/icons/bug.png", wxLOG_Debug);
-
+    AddMessageFilterTool(ID_ToolLogError, "Log error", _("Log error enabled"), "icons/error.png", wxLOG_Error);
+    AddMessageFilterTool(ID_ToolLogWarning, "Log warning", _("Log warning enabled"), "icons/warning.png", wxLOG_Warning);
+    AddMessageFilterTool(ID_ToolLogMessage, "Log message", _("Log message enabled"), "icons/message.png", wxLOG_Message);
+    AddMessageFilterTool(ID_ToolLogInfo, "Log info", _("Log info enabled"), "icons/info.png", wxLOG_Info);
+    AddMessageFilterTool(ID_ToolLogDebug, "Log debug", _("Log debug enabled"), "icons/bug.png", wxLOG_Debug);
     _toolBar->AddStretchableSpace();
 
-    _toolBar->AddCheckTool(ID_ToolTransparent, "Toggle transparency", Icons::LoadPngBitmap16("/icons/transparency.png"));
+    _toolBar->AddCheckTool(ID_ToolTransparent, "Toggle transparency", Icons::LoadPngBitmap16("icons/transparency.png"));
     _toolBar->SetToolShortHelp(ID_ToolTransparent, _("Toggle transparency"));
     Bind(wxEVT_TOOL, &LogWindow::OnToolTransparency, this, ID_ToolTransparent);
 
     _opacitySpin->Bind(wxEVT_SPINCTRL, &LogWindow::OnToolOpacitySpin, this);
     _toolBar->AddControl(_opacitySpin, "Opacity");
 
-    _toolBar->AddCheckTool(ID_ToolAlwaysOnTop, "Always on top", Icons::LoadPngBitmap16("/icons/thumbtack.png"));
+    _toolBar->AddCheckTool(ID_ToolAlwaysOnTop, "Always on top", Icons::LoadPngBitmap16("icons/thumbtack.png"));
     _toolBar->SetToolShortHelp(ID_ToolAlwaysOnTop, _("Always on top"));
     Bind(wxEVT_TOOL, &LogWindow::OnToolAlwaysOnTop, this, ID_ToolAlwaysOnTop);
 
-    _toolBar->AddTool(ID_ToolClose, "Close", Icons::LoadPngBitmap16("/icons/close.png"));
+    _toolBar->AddTool(ID_ToolClose, "Close", Icons::LoadPngBitmap16("icons/close.png"));
     _toolBar->SetToolShortHelp(ID_ToolClose, _("Close"));
     Bind(wxEVT_TOOL, [=](wxCommandEvent&) { Close(); }, ID_ToolClose);
 
     _toolBar->Realize();
     SetToolBar(_toolBar);
+}
+
+void LogWindow::SetupLayout()
+{
+    const auto moveButton = new wxButton(this, ID_ToolMove, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_NOTEXT | wxBU_EXACTFIT | wxBORDER_NONE);
+    moveButton->SetBitmap(Icons::LoadPngBitmap16("icons/move.png"));
+    moveButton->SetToolTip(_("Move"));
+    moveButton->Bind(wxEVT_LEFT_DOWN, &LogWindow::OnMouseDown, this);
+    moveButton->Bind(wxEVT_MOTION, &LogWindow::OnButtonMove, this);
+
+    const auto resizeButton = new wxButton(this, ID_ToolResize, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_NOTEXT | wxBU_EXACTFIT | wxBORDER_NONE);
+    resizeButton->SetBitmap(Icons::LoadPngBitmap16("icons/resize.png"));
+    resizeButton->SetToolTip(_("Resize"));
+    resizeButton->Bind(wxEVT_LEFT_DOWN, &LogWindow::OnMouseDown, this);
+    resizeButton->Bind(wxEVT_MOTION, &LogWindow::OnButtonResize, this);
+
+    const auto bottomSizer = new wxBoxSizer(wxHORIZONTAL);
+    bottomSizer->Add(moveButton, 0);
+    bottomSizer->Add(resizeButton, 0);
+
+    const auto sizer = new wxBoxSizer(wxVERTICAL);
+    sizer->Add(_logController->TextLog(), 1, wxEXPAND);
+    sizer->Add(bottomSizer, 0, wxALIGN_RIGHT);
+    SetSizer(sizer);
 }
 
 void LogWindow::DefaultState()
@@ -205,7 +208,7 @@ void LogWindow::OnMouseDown(wxMouseEvent& event)
 
 void LogWindow::SaveSettings()
 {
-    wxConfigBase* config = wxConfigBase::Get();
+    const auto config = wxConfigBase::Get();
     config->SetPath("/LogWindow");
 
     config->Write("Width", GetSize().GetWidth());
@@ -215,7 +218,7 @@ void LogWindow::SaveSettings()
 
 void LogWindow::LoadSettings()
 {
-    wxConfigBase* config = wxConfigBase::Get();
+    const auto config = wxConfigBase::Get();
     config->SetPath("/LogWindow");
 
     int width;

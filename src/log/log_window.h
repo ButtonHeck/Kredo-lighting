@@ -18,6 +18,7 @@ public:
 
 private:
     void SetupToolBar();
+    void SetupLayout();
     void DefaultState();
     void AddMessageFilterTool(int id, const char* name, const char* help, const char* iconPath, int level);
 

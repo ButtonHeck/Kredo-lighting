@@ -46,7 +46,7 @@ class BufferLayout
 {
 public:
     BufferLayout() = default;
-    BufferLayout(std::initializer_list<BufferElement> elements);
+    explicit BufferLayout(std::initializer_list<BufferElement> elements);
 
     uint32_t GetStride() const;
     const BufferElementVector& GetElements() const;
@@ -68,12 +68,13 @@ private:
 class OpenGLVertexBuffer
 {
 public:
-    OpenGLVertexBuffer(uint32_t size);
+    explicit OpenGLVertexBuffer(uint32_t size);
     OpenGLVertexBuffer(float* vertices, uint32_t size);
     ~OpenGLVertexBuffer();
 
     void Bind() const;
     void Unbind() const;
+
     void SetData(const void* data, uint32_t size);
 
     const BufferLayout& GetLayout() const;

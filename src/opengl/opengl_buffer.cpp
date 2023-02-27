@@ -10,15 +10,19 @@ uint32_t ShaderDataTypeSize(ShaderDataType type)
     switch (type)
     {
     case ShaderDataType::Float:
+    case ShaderDataType::Int:
         return 4;
 
     case ShaderDataType::Float2:
+    case ShaderDataType::Int2:
         return 4 * 2;
 
     case ShaderDataType::Float3:
+    case ShaderDataType::Int3:
         return 4 * 3;
 
     case ShaderDataType::Float4:
+    case ShaderDataType::Int4:
         return 4 * 4;
 
     case ShaderDataType::Mat3:
@@ -26,18 +30,6 @@ uint32_t ShaderDataTypeSize(ShaderDataType type)
 
     case ShaderDataType::Mat4:
         return 4 * 4 * 4;
-
-    case ShaderDataType::Int:
-        return 4;
-
-    case ShaderDataType::Int2:
-        return 4 * 2;
-
-    case ShaderDataType::Int3:
-        return 4 * 3;
-
-    case ShaderDataType::Int4:
-        return 4 * 4;
 
     case ShaderDataType::Bool:
         return 1;
@@ -48,6 +40,7 @@ uint32_t ShaderDataTypeSize(ShaderDataType type)
 
     return 0;
 }
+
 
 BufferElement::BufferElement(ShaderDataType type, const wxString& name, bool normalized)
     : type(type)

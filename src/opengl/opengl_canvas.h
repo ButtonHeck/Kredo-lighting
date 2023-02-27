@@ -2,8 +2,8 @@
 
 #include "pointers.h"
 
-#include <wx/glcanvas.h>
 #include <wx/timer.h>
+#include <wx/glcanvas.h>
 
 namespace Kredo
 {
@@ -14,7 +14,7 @@ class OpenGLManager;
 class OpenGLCanvas : public wxGLCanvas
 {
 public:
-    OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow* parent = nullptr);
+    explicit OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow* parent = nullptr);
 
 private:
     void InitializeContext();

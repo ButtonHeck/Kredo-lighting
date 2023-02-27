@@ -91,8 +91,7 @@ void OpenGLShader::SetVec3(const wxString& name, float x, float y, float z) cons
 
 void OpenGLShader::SetMat4(const wxString& name, const glm::mat4& model) const
 {
-    const auto loc = glGetUniformLocation(_id, name.ToStdString().c_str());
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(glGetUniformLocation(_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(model));
 }
 
 GLuint OpenGLShader::GetId() const

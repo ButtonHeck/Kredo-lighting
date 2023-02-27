@@ -32,9 +32,7 @@ private:
 
 private:
     wxToolBar* const _toolBar;
-
     wxSplitterWindow* const _mainSplitter;
-
     OpenGLWindow* const _openglWindow;
     LogWindow* const _logWindow;
 };

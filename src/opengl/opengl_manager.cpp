@@ -1,3 +1,4 @@
+#include "filesystem.h"
 #include "opengl_shader.h"
 #include "opengl_buffer.h"
 #include "opengl_manager.h"
@@ -17,16 +18,16 @@ OpenGLManager::OpenGLManager()
     , _origin(0, 0)
     , _camera(Camera(glm::vec3(0.0f, 0.0f, 10.0f)))
     , _hasMouseMove(false)
-    , _shader(new OpenGLShader())
+    , _shader(CreateUnique<OpenGLShader>())
 {
     _keysPressed.fill(false);
     _initialized = gladLoadGL() != 0;
 
     if (_initialized)
     {
-        _vertexArray.reset(new OpenGLVertexArray);
-        _shader->Load(wxString::Format("%s%s", KREDO_RESOURCES_DIR, "/shaders/basic.vs"),
-                      wxString::Format("%s%s", KREDO_RESOURCES_DIR, "/shaders/basic.fs"));
+        _vertexArray = CreateShared<OpenGLVertexArray>();
+        _shader->Load(Filesystem::Path(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, "shaders/basic.vs")),
+                      Filesystem::Path(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, "shaders/basic.fs")));
 
         glEnable(GL_DEPTH_TEST);
 
@@ -75,9 +76,8 @@ OpenGLManager::OpenGLManager()
         };
 
         Shared<OpenGLVertexBuffer> vertexBuffer = CreateShared<OpenGLVertexBuffer>(vertices, sizeof(vertices));
-        BufferLayout layout = {
-            {ShaderDataType::Float3, "i_Pos"}
-        };
+        const auto layout = BufferLayout( {{ShaderDataType::Float3, "i_Pos"}} );
+
         vertexBuffer->SetLayout(layout);
         _vertexArray->AddVertexBuffer(vertexBuffer);
     }
