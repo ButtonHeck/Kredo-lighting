@@ -1,8 +1,9 @@
 #pragma once
 
+#include "pointers.h"
+
 #include <wx/glcanvas.h>
 #include <wx/timer.h>
-#include <memory>
 
 namespace Kredo
 {
@@ -32,8 +33,8 @@ private:
     void OnWindowLeave(wxMouseEvent& event);
 
 private:
-    std::unique_ptr<wxGLContext> _context;
-    std::unique_ptr<OpenGLManager> _manager;
+    Unique<wxGLContext> _context;
+    Unique<OpenGLManager> _manager;
     bool _renderLoop;
     wxPoint _mouseCapture;
     wxTimer _renderTimer;

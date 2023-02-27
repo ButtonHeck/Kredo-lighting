@@ -74,7 +74,7 @@ OpenGLManager::OpenGLManager()
           -0.5f,  0.5f, -0.5f
         };
 
-        std::shared_ptr<OpenGLVertexBuffer> vertexBuffer = std::make_shared<OpenGLVertexBuffer>(vertices, sizeof(vertices));
+        Shared<OpenGLVertexBuffer> vertexBuffer = CreateShared<OpenGLVertexBuffer>(vertices, sizeof(vertices));
         BufferLayout layout = {
             {ShaderDataType::Float3, "i_Pos"}
         };

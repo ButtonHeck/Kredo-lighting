@@ -70,7 +70,7 @@ void OpenGLVertexArray::Unbind() const
     glBindVertexArray(0);
 }
 
-void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<OpenGLVertexBuffer>& vertexBuffer)
+void OpenGLVertexArray::AddVertexBuffer(const Shared<OpenGLVertexBuffer>& vertexBuffer)
 {
     if (vertexBuffer->GetLayout().GetElements().size() == 0)
     {
@@ -143,19 +143,19 @@ void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<OpenGLVertexBuffer
     _vertexBuffers.push_back(vertexBuffer);
 }
 
-void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<OpenGLIndexBuffer>& indexBuffer)
+void OpenGLVertexArray::SetIndexBuffer(const Shared<OpenGLIndexBuffer>& indexBuffer)
 {
     glBindVertexArray(_id);
     indexBuffer->Bind();
     _indexBuffer = indexBuffer;
 }
 
-const std::vector<std::shared_ptr<OpenGLVertexBuffer>>& OpenGLVertexArray::GetVertexBuffers() const
+const std::vector<Shared<OpenGLVertexBuffer>>& OpenGLVertexArray::GetVertexBuffers() const
 {
     return _vertexBuffers;
 }
 
-const std::shared_ptr<OpenGLIndexBuffer>& OpenGLVertexArray::GetIndexBuffer() const
+const Shared<OpenGLIndexBuffer>& OpenGLVertexArray::GetIndexBuffer() const
 {
     return _indexBuffer;
 }

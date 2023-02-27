@@ -1,10 +1,10 @@
 #pragma once
 
+#include "pointers.h"
 #include "opengl_buffer.h"
 
 #include <vector>
 #include <cstdint>
-#include <memory>
 
 namespace Kredo
 {
@@ -18,17 +18,17 @@ public:
     void Bind() const;
     void Unbind() const;
 
-    void AddVertexBuffer(const std::shared_ptr<OpenGLVertexBuffer>& vertexBuffer);
-    void SetIndexBuffer(const std::shared_ptr<OpenGLIndexBuffer> &indexBuffer);
+    void AddVertexBuffer(const Shared<OpenGLVertexBuffer>& vertexBuffer);
+    void SetIndexBuffer(const Shared<OpenGLIndexBuffer>& indexBuffer);
 
-    const std::vector<std::shared_ptr<OpenGLVertexBuffer>>& GetVertexBuffers() const;
-    const std::shared_ptr<OpenGLIndexBuffer>& GetIndexBuffer() const;
+    const std::vector<Shared<OpenGLVertexBuffer>>& GetVertexBuffers() const;
+    const Shared<OpenGLIndexBuffer>& GetIndexBuffer() const;
 
 private:
     uint32_t _id;
     uint32_t _vertexBufferIndex = 0;
-    std::vector<std::shared_ptr<OpenGLVertexBuffer>> _vertexBuffers;
-    std::shared_ptr<OpenGLIndexBuffer> _indexBuffer;
+    std::vector<Shared<OpenGLVertexBuffer>> _vertexBuffers;
+    Shared<OpenGLIndexBuffer> _indexBuffer;
 };
 
 }
