@@ -10,37 +10,37 @@ GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
 {
     switch (type)
     {
-    case ShaderDataType::ShaderTypeFloat:
+    case ShaderDataType::Float:
         return GL_FLOAT;
 
-    case ShaderDataType::ShaderTypeFloat2:
+    case ShaderDataType::Float2:
         return GL_FLOAT;
 
-    case ShaderDataType::ShaderTypeFloat3:
+    case ShaderDataType::Float3:
         return GL_FLOAT;
 
-    case ShaderDataType::ShaderTypeFloat4:
+    case ShaderDataType::Float4:
         return GL_FLOAT;
 
-    case ShaderDataType::ShaderTypeMat3:
+    case ShaderDataType::Mat3:
         return GL_FLOAT;
 
-    case ShaderDataType::ShaderTypeMat4:
+    case ShaderDataType::Mat4:
         return GL_FLOAT;
 
-    case ShaderDataType::ShaderTypeInt:
+    case ShaderDataType::Int:
         return GL_INT;
 
-    case ShaderDataType::ShaderTypeInt2:
+    case ShaderDataType::Int2:
         return GL_INT;
 
-    case ShaderDataType::ShaderTypeInt3:
+    case ShaderDataType::Int3:
         return GL_INT;
 
-    case ShaderDataType::ShaderTypeInt4:
+    case ShaderDataType::Int4:
         return GL_INT;
 
-    case ShaderDataType::ShaderTypeBool:
+    case ShaderDataType::Bool:
         return GL_BOOL;
 
     default:
@@ -86,10 +86,10 @@ void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<OpenGLVertexBuffer
     {
         switch (element.type)
         {
-        case ShaderDataType::ShaderTypeFloat:
-        case ShaderDataType::ShaderTypeFloat2:
-        case ShaderDataType::ShaderTypeFloat3:
-        case ShaderDataType::ShaderTypeFloat4:
+        case ShaderDataType::Float:
+        case ShaderDataType::Float2:
+        case ShaderDataType::Float3:
+        case ShaderDataType::Float4:
         {
             glEnableVertexAttribArray(_vertexBufferIndex);
             glVertexAttribPointer(_vertexBufferIndex,
@@ -101,11 +101,11 @@ void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<OpenGLVertexBuffer
             _vertexBufferIndex++;
             break;
         }
-        case ShaderDataType::ShaderTypeInt:
-        case ShaderDataType::ShaderTypeInt2:
-        case ShaderDataType::ShaderTypeInt3:
-        case ShaderDataType::ShaderTypeInt4:
-        case ShaderDataType::ShaderTypeBool:
+        case ShaderDataType::Int:
+        case ShaderDataType::Int2:
+        case ShaderDataType::Int3:
+        case ShaderDataType::Int4:
+        case ShaderDataType::Bool:
         {
             glVertexAttribIPointer(_vertexBufferIndex,
                                    element.GetComponentCount(),
@@ -115,8 +115,8 @@ void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<OpenGLVertexBuffer
             _vertexBufferIndex++;
             break;
         }
-        case ShaderDataType::ShaderTypeMat3:
-        case ShaderDataType::ShaderTypeMat4:
+        case ShaderDataType::Mat3:
+        case ShaderDataType::Mat4:
         {
             const auto count = element.GetComponentCount();
             for (auto i = 0; i < count; i++)

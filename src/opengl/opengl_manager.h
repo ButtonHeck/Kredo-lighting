@@ -2,8 +2,11 @@
 
 //temp
 #include "camera.h"
+#include "opengl_vertex_array.h"
+
 #include <wx/gdicmn.h>
 #include <array>
+#include <memory>
 
 class wxKeyEvent;
 class wxMouseEvent;
@@ -38,10 +41,9 @@ private:
 
     // temporary
     unsigned int _width, _height;
-    unsigned int _vbo, _vao;
     Camera _camera;
-    OpenGLShader* const _shader;
-
+    std::unique_ptr<OpenGLShader> _shader;
+    std::shared_ptr<OpenGLVertexArray> _vertexArray;
     std::array<bool, WXK_WINDOWS_MENU> _keysPressed;
     wxPoint _origin;
     bool _hasMouseMove;

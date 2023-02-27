@@ -1,4 +1,5 @@
 #include "opengl_shader.h"
+#include "opengl_buffer.h"
 #include "opengl_manager.h"
 
 #include <wx/log.h>
@@ -23,12 +24,13 @@ OpenGLManager::OpenGLManager()
 
     if (_initialized)
     {
+        _vertexArray.reset(new OpenGLVertexArray);
         _shader->Load(wxString::Format("%s%s", KREDO_RESOURCES_DIR, "/shaders/basic.vs"),
                       wxString::Format("%s%s", KREDO_RESOURCES_DIR, "/shaders/basic.fs"));
 
         glEnable(GL_DEPTH_TEST);
 
-        const GLfloat vertices[] = {
+        float vertices[] = {
           -0.5f, -0.5f, -0.5f,
            0.5f, -0.5f, -0.5f,
            0.5f,  0.5f, -0.5f,
@@ -72,25 +74,18 @@ OpenGLManager::OpenGLManager()
           -0.5f,  0.5f, -0.5f
         };
 
-        glCreateVertexArrays(1, &_vao);
-        glBindVertexArray(_vao);
-
-        glCreateBuffers(1, &_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-        glEnableVertexAttribArray(0);
+        std::shared_ptr<OpenGLVertexBuffer> vertexBuffer = std::make_shared<OpenGLVertexBuffer>(vertices, sizeof(vertices));
+        BufferLayout layout = {
+            {ShaderDataType::Float3, "i_Pos"}
+        };
+        vertexBuffer->SetLayout(layout);
+        _vertexArray->AddVertexBuffer(vertexBuffer);
     }
 }
 
 OpenGLManager::~OpenGLManager()
 {
-    glDeleteBuffers(1, &_vbo);
-    glDeleteBuffers(1, &_vao);
     glFinish();
-
-    delete _shader;
 }
 
 bool OpenGLManager::IsInitialized() const
@@ -165,6 +160,8 @@ void OpenGLManager::Render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    _vertexArray->Bind();
+
     const glm::vec3 cubePositions[] = {
       glm::vec3(0.0f,   0.0f,  0.0f ),
       glm::vec3(2.0f,   5.0f, -15.0f ),
@@ -179,15 +176,15 @@ void OpenGLManager::Render()
     };
 
     _shader->Use();
-    _shader->SetMat4("view", _camera.GetViewMatrix());
+    _shader->SetMat4("u_View", _camera.GetViewMatrix());
 
     const auto projection = glm::perspective(glm::radians(_camera.GetFov()), float(_width) / float(_height), 0.1f, 100.0f);
-    _shader->SetMat4("projection", projection);
+    _shader->SetMat4("u_Projection", projection);
 
     for (auto i = 0; i < 10; i++)
     {
         const auto model = glm::translate(glm::mat4(1.0), cubePositions[i]);
-        _shader->SetMat4("model", model);
+        _shader->SetMat4("u_Model", model);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }

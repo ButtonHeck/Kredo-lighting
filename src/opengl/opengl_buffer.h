@@ -9,18 +9,18 @@ namespace Kredo
 
 enum class ShaderDataType
 {
-    ShaderTypeNone = 0,
-    ShaderTypeFloat,
-    ShaderTypeFloat2,
-    ShaderTypeFloat3,
-    ShaderTypeFloat4,
-    ShaderTypeMat3,
-    ShaderTypeMat4,
-    ShaderTypeInt,
-    ShaderTypeInt2,
-    ShaderTypeInt3,
-    ShaderTypeInt4,
-    ShaderTypeBool
+    None = 0,
+    Float,
+    Float2,
+    Float3,
+    Float4,
+    Mat3,
+    Mat4,
+    Int,
+    Int2,
+    Int3,
+    Int4,
+    Bool
 };
 
 uint32_t ShaderDataTypeSize(ShaderDataType type);
