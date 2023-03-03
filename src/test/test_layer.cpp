@@ -1,31 +1,23 @@
 #include <glad/glad.h>
 
+#include "scene.h"
 #include "filesystem.h"
+#include "test_layer.h"
 #include "opengl_shader.h"
-#include "opengl_buffer.h"
-#include "opengl_manager.h"
 
-#include <wx/log.h>
-#include <wx/event.h>
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <wx/string.h>
 
 namespace Kredo
 {
 
-OpenGLManager::OpenGLManager()
-    : _width(0)
-    , _height(0)
-    , _origin(0, 0)
-    , _camera(Camera(glm::vec3(0.0f, 0.0f, 10.0f)))
-    , _hasMouseMove(false)
+TestLayer::TestLayer(Shared<Scene>& scene)
+    : SceneLayer(scene)
     , _shader(CreateUnique<OpenGLShader>(Filesystem::Path(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, "shaders/basic.vs")),
                                          Filesystem::Path(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, "shaders/basic.fs"))))
 {
-    _keysPressed.fill(false);
     _vertexArray = CreateShared<OpenGLVertexArray>();
-
-    glEnable(GL_DEPTH_TEST);
 
     float vertices[] = {
       -0.5f, -0.5f, -0.5f,
@@ -78,75 +70,8 @@ OpenGLManager::OpenGLManager()
     _vertexArray->AddVertexBuffer(vertexBuffer);
 }
 
-OpenGLManager::~OpenGLManager()
+void TestLayer::Render() const
 {
-    glFinish();
-}
-
-void OpenGLManager::ProcessKeyPressed(int keyCode)
-{
-    _keysPressed[keyCode] = true;
-}
-
-void OpenGLManager::ProcessKeyReleased(int keyCode)
-{
-    _keysPressed[keyCode] = false;
-}
-
-void OpenGLManager::ProcessMouseMove()
-{
-    _hasMouseMove = true;
-}
-
-void OpenGLManager::UpdateOrigin()
-{
-    wxGetMousePosition(&_origin.x, &_origin.y);
-}
-
-void OpenGLManager::ProcessEvents()
-{
-    if (_hasMouseMove)
-    {
-        int x, y;
-        wxGetMousePosition(&x, &y);
-        const auto mouseDx = x - _origin.x;
-        const auto mouseDy = _origin.y - y;
-        _origin = wxPoint(x, y);
-        _camera.Rotate(float(mouseDx), float(mouseDy));
-        _hasMouseMove = false;
-    }
-
-    if (_keysPressed['W'])
-        _camera.Move(Camera::ForwardDirection, 0.1f);
-    if (_keysPressed['S'])
-        _camera.Move(Camera::BackwardDirection, 0.1f);
-    if (_keysPressed['A'])
-        _camera.Move(Camera::LeftDirection, 0.1f);
-    if (_keysPressed['D'])
-        _camera.Move(Camera::RightDirection, 0.1f);
-    if (_keysPressed[WXK_SPACE])
-        _camera.Move(Camera::UpDirection, 0.1f);
-    if (_keysPressed[WXK_SHIFT])
-        _camera.Move(Camera::DownDirection, 0.1f);
-}
-
-void OpenGLManager::ClearEvents()
-{
-    _hasMouseMove = false;
-    _keysPressed.fill(false);
-}
-
-void OpenGLManager::SetSize(int width, int height)
-{
-    _width = width;
-    _height = height;
-    glViewport(0, 0, _width, _height);
-}
-
-void OpenGLManager::Render()
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     _vertexArray->Bind();
 
     const glm::vec3 cubePositions[] = {
@@ -162,10 +87,12 @@ void OpenGLManager::Render()
       glm::vec3(-1.3f,  1.0f, -1.5f )
     };
 
-    _shader->Use();
-    _shader->SetMat4("u_View", _camera.GetViewMatrix());
+    const auto camera = _scene->GetCamera();
 
-    const auto projection = glm::perspective(glm::radians(_camera.GetFov()), float(_width) / float(_height), 0.1f, 100.0f);
+    _shader->Use();
+    _shader->SetMat4("u_View", camera.GetViewMatrix());
+
+    const auto projection = glm::perspective(glm::radians(camera.GetFov()), camera.GetAspectRatio(), 0.1f, 100.0f);
     _shader->SetMat4("u_Projection", projection);
 
     for (auto i = 0; i < 10; i++)

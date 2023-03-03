@@ -1,7 +1,7 @@
 #pragma once
 
+#include "scene.h"
 #include "pointers.h"
-#include "opengl_manager.h"
 
 #include <wx/timer.h>
 #include <wx/glcanvas.h>
@@ -36,7 +36,7 @@ private:
 
 private:
     Unique<wxGLContext> _context;
-    Unique<OpenGLManager> _manager;
+    Shared<Scene> _scene;
     bool _renderLoop;
     wxPoint _mouseCapture;
     wxTimer _renderTimer;

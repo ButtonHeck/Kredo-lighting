@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 
+#include "test_layer.h"
 #include "opengl_canvas.h"
 #include "opengl_window.h"
 
@@ -34,7 +35,7 @@ wxDEFINE_EVENT(OPENGL_LOAD_EVENT, OpenGLLoadEvent);
 OpenGLCanvas::OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow* parent)
     : wxGLCanvas(parent, canvasAttributes, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
     , _context(nullptr)
-    , _manager(nullptr)
+    , _scene(nullptr)
     , _renderLoop(false)
     , _mouseCapture(0, 0)
 {
@@ -68,7 +69,7 @@ void OpenGLCanvas::InitializeOpenGL(wxSizeEvent& event)
 #ifndef __WXMSW__
         eglSwapInterval(GetEGLDisplay(), 1);
 #endif
-        _manager.reset(new OpenGLManager());
+        _scene.reset(new Scene());
         OpenGLLoadEvent loadEvent(OPENGL_LOAD_EVENT, GetId());
         ProcessWindowEvent(loadEvent);
 
@@ -82,14 +83,14 @@ void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
     {
         _renderLoop = true;
         _mouseCapture = capturePosition;
-        _manager->UpdateOrigin();
+        _scene->UpdateOrigin();
         _renderTimer.Start(1000.0 / 60.0);
     }
     else if (!on && _renderLoop)
     {
         _renderLoop = false;
         WarpPointer(_mouseCapture.x, _mouseCapture.y);
-        _manager->ClearEvents();
+        _scene->ClearEvents();
         _renderTimer.Stop();
     }
 }
@@ -98,8 +99,8 @@ void OpenGLCanvas::Render(wxDC& dc)
 {
     WXUNUSED(dc);
 
-    _manager->ProcessEvents();
-    _manager->Render();
+    _scene->ProcessEvents();
+    _scene->Render();
     SwapBuffers();
 }
 
@@ -121,20 +122,20 @@ void OpenGLCanvas::OnSize(wxSizeEvent& event)
     const auto size = event.GetSize() * GetContentScaleFactor();
     wxLogDebug("OpenGLCanvas: onSize [%dx%d]", size.GetWidth(), size.GetHeight());
 
-    _manager->SetSize(size.x, size.y);
+    _scene->SetSize(size.x, size.y);
     Refresh();
 }
 
 void OpenGLCanvas::OnKeyDown(wxKeyEvent& event)
 {
     if (_renderLoop)
-        _manager->ProcessKeyPressed(event.GetKeyCode());
+        _scene->ProcessKeyPressed(event.GetKeyCode());
 }
 
 void OpenGLCanvas::OnKeyUp(wxKeyEvent& event)
 {
     if (_renderLoop)
-        _manager->ProcessKeyReleased(event.GetKeyCode());
+        _scene->ProcessKeyReleased(event.GetKeyCode());
 }
 
 void OpenGLCanvas::OnMouseRightDown(wxMouseEvent& event)
@@ -149,7 +150,7 @@ void OpenGLCanvas::OnMouseMove(wxMouseEvent& event)
     event.Skip();
 
     if (_renderLoop)
-        _manager->ProcessMouseMove();
+        _scene->ProcessMouseMove();
 }
 
 void OpenGLCanvas::OnTimer(wxTimerEvent& event)
@@ -168,22 +169,22 @@ void OpenGLCanvas::OnWindowLeave(wxMouseEvent& event)
         if (event.GetX() <= 0)
         {
             WarpPointer(size.GetWidth(), event.GetY());
-            _manager->UpdateOrigin();
+            _scene->UpdateOrigin();
         }
         else if (event.GetX() >= size.GetWidth())
         {
             WarpPointer(0, event.GetY());
-            _manager->UpdateOrigin();
+            _scene->UpdateOrigin();
         }
         else if (event.GetY() <= 0)
         {
             WarpPointer(event.GetX(), size.GetHeight());
-            _manager->UpdateOrigin();
+            _scene->UpdateOrigin();
         }
         else if (event.GetY() >= size.GetHeight())
         {
             WarpPointer(event.GetX(), 0);
-            _manager->UpdateOrigin();
+            _scene->UpdateOrigin();
         }
     }
 }
@@ -203,6 +204,9 @@ void OpenGLCanvas::OnOpenGLLoaded(OpenGLLoadEvent& event)
     Bind(wxEVT_LEAVE_WINDOW, &OpenGLCanvas::OnWindowLeave, this);
 
     _renderTimer.Bind(wxEVT_TIMER, &OpenGLCanvas::OnTimer, this);
+
+    // temporary
+    const auto testLayer = new TestLayer(_scene);
 }
 
 }

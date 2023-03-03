@@ -17,6 +17,7 @@ Camera::Camera(const glm::vec3& position)
     , _moveSpeed(2.5f)
     , _rotateSensitivity(0.05f)
     , _fov(60.0f)
+    , _aspectRatio(0.0f)
 {
     Update();
 }
@@ -29,6 +30,16 @@ glm::mat4 Camera::GetViewMatrix() const
 float Camera::GetFov() const
 {
     return _fov;
+}
+
+void Camera::SetAspectRatio(float aspectRatio)
+{
+    _aspectRatio = aspectRatio;
+}
+
+float Camera::GetAspectRatio() const
+{
+    return _aspectRatio;
 }
 
 void Camera::Move(MoveDirection direction, float delta)

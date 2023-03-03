@@ -25,6 +25,9 @@ public:
     glm::mat4 GetViewMatrix() const;
     float GetFov() const;
 
+    void SetAspectRatio(float aspectRatio);
+    float GetAspectRatio() const;
+
     void Move(MoveDirection direction, float delta);
     void Rotate(float x, float y);
 
@@ -41,6 +44,7 @@ private:
     float _yaw;
     float _pitch;
     float _fov;
+    float _aspectRatio;
 
     float _moveSpeed;
     float _rotateSensitivity;

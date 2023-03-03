@@ -1,9 +1,7 @@
 #pragma once
 
-//temp
 #include "camera.h"
 #include "pointers.h"
-#include "opengl_vertex_array.h"
 
 #include <wx/gdicmn.h>
 #include <array>
@@ -15,13 +13,17 @@ class wxEvent;
 namespace Kredo
 {
 
-class OpenGLShader;
+class SceneLayer;
 
-class OpenGLManager
+class Scene
 {
 public:
-    OpenGLManager();
-    ~OpenGLManager();
+    Scene();
+    ~Scene();
+
+    void AddLayer(SceneLayer* layer);
+
+    const Camera& GetCamera() const;
 
     void ProcessKeyPressed(int keyCode);
     void ProcessKeyReleased(int keyCode);
@@ -35,11 +37,8 @@ public:
     void Render();
 
 private:
-    // temporary
-    unsigned int _width, _height;
     Camera _camera;
-    Unique<OpenGLShader> _shader;
-    Shared<OpenGLVertexArray> _vertexArray;
+    std::vector<SceneLayer*> _layers;
     std::array<bool, WXK_WINDOWS_MENU> _keysPressed;
     wxPoint _origin;
     bool _hasMouseMove;
