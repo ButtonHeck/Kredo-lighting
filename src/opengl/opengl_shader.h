@@ -1,6 +1,5 @@
 #pragma once
 
-#include <glad/glad.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
@@ -28,17 +27,17 @@ public:
     void SetVec3(const wxString& name, float x, float y, float z) const;
     void SetMat4(const wxString& name, const glm::mat4& model) const;
 
-    GLuint GetId() const;
+    uint32_t GetId() const;
     void Use();
     void Cleanup();
 
 private:
-    GLuint LoadShader(const wxString& path, GLenum type);
-    bool CheckShader(GLuint shader);
+    uint32_t LoadShader(const wxString& path, uint32_t type);
+    bool CheckShader(uint32_t id);
     bool CheckProgram();
 
 private:
-    GLuint _id;
+    uint32_t _id;
 };
 
 }

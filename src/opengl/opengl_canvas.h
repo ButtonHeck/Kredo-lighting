@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pointers.h"
+#include "opengl_manager.h"
 
 #include <wx/timer.h>
 #include <wx/glcanvas.h>
@@ -9,7 +10,6 @@ namespace Kredo
 {
 
 class OpenGLWindow;
-class OpenGLManager;
 
 class OpenGLCanvas : public wxGLCanvas
 {

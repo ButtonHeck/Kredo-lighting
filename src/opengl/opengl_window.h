@@ -1,5 +1,7 @@
 #pragma once
 
+#include "pointers.h"
+
 #include <wx/window.h>
 
 namespace Kredo
@@ -16,7 +18,7 @@ private:
     void OnSize(wxSizeEvent& event);
 
 private:
-    OpenGLCanvas* _openglCanvas;
+    Unique<OpenGLCanvas> _openglCanvas;
 };
 
 }

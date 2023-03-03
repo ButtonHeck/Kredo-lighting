@@ -1,6 +1,5 @@
 #include "opengl_canvas.h"
 #include "opengl_window.h"
-#include "opengl_manager.h"
 
 #include <wx/log.h>
 #include <wx/msgdlg.h>

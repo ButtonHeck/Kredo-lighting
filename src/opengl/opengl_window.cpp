@@ -17,13 +17,13 @@ OpenGLWindow::OpenGLWindow(wxWindow* parent, int id)
     const auto valid = wxGLCanvas::IsDisplaySupported(openglAttributes);
 
     if (valid)
-        _openglCanvas = new OpenGLCanvas(openglAttributes, this);
+        _openglCanvas.reset(new OpenGLCanvas(openglAttributes, this));
 }
 
 void OpenGLWindow::OnSize(wxSizeEvent& event)
 {
     const auto size = event.GetSize() * GetContentScaleFactor();
-    wxLogDebug("OpenGL window onSize [%dx%d]", size.GetWidth(), size.GetHeight());
+    wxLogDebug("OpenGLWindow: onSize [%dx%d]", size.GetWidth(), size.GetHeight());
 
     _openglCanvas->SetSize(size);
 }

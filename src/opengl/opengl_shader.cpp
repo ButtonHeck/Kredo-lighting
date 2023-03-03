@@ -4,6 +4,7 @@
 #include <wx/string.h>
 #include <wx/sstream.h>
 #include <wx/wfstream.h>
+#include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Kredo
@@ -94,7 +95,7 @@ void OpenGLShader::SetMat4(const wxString& name, const glm::mat4& model) const
     glUniformMatrix4fv(glGetUniformLocation(_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(model));
 }
 
-GLuint OpenGLShader::GetId() const
+uint32_t OpenGLShader::GetId() const
 {
     return _id;
 }
@@ -109,7 +110,7 @@ void OpenGLShader::Cleanup()
     glDeleteProgram(_id);
 }
 
-GLuint OpenGLShader::LoadShader(const wxString& path, GLenum type)
+uint32_t OpenGLShader::LoadShader(const wxString& path, uint32_t type)
 {
     wxFileStream fileStream(path);
     wxStringOutputStream stringStream;
@@ -118,7 +119,7 @@ GLuint OpenGLShader::LoadShader(const wxString& path, GLenum type)
     const auto shaderString = stringStream.GetString().ToStdString();
     const auto shaderSource = shaderString.c_str();
 
-    GLuint shader = glCreateShader(type);
+    const auto shader = glCreateShader(type);
     glShaderSource(shader, 1, &shaderSource, nullptr);
     glCompileShader(shader);
     CheckShader(shader);
@@ -126,15 +127,15 @@ GLuint OpenGLShader::LoadShader(const wxString& path, GLenum type)
     return shader;
 }
 
-bool OpenGLShader::CheckShader(GLuint shader)
+bool OpenGLShader::CheckShader(uint32_t id)
 {
     int status;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    glGetShaderiv(id, GL_COMPILE_STATUS, &status);
     if (status != 1)
     {
         char log[512];
-        glGetShaderInfoLog(shader, sizeof(log), nullptr, log);
-        wxLogDebug(wxString::Format("Shader compilation error: %s", log));
+        glGetShaderInfoLog(id, sizeof(log), nullptr, log);
+        wxLogDebug(wxString::Format("OpenGLShader: shader compilation error: %s", log));
         return false;
     }
 
@@ -149,7 +150,7 @@ bool OpenGLShader::CheckProgram()
     {
         char log[512];
         glGetProgramInfoLog(_id, sizeof(log), nullptr, log);
-        wxLogDebug(wxString::Format("Program link error: %s", log));
+        wxLogDebug(wxString::Format("OpenGLShader: program link error: %s", log));
         return false;
     }
 

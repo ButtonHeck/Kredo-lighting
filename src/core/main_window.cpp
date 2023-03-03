@@ -23,7 +23,7 @@ enum SplitterID
 enum WindowID
 {
     ID_WindowLog = ID_SplitterLast + 1,
-    ID_WindowMain,
+    ID_WindowOpenGL,
     ID_WindowLast
 };
 
@@ -44,7 +44,7 @@ MainWindow::MainWindow()
     : wxFrame(nullptr, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(1920, 1080), wxDEFAULT_FRAME_STYLE)
     , _toolBar(new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize))
     , _mainSplitter(new wxSplitterWindow(this, ID_SplitterMain, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE))
-    , _openglWindow(new OpenGLWindow(_mainSplitter, ID_WindowMain))
+    , _openglWindow(new OpenGLWindow(_mainSplitter, ID_WindowOpenGL))
     , _logWindow(new LogWindow(this, ID_WindowLog))
 {
     SetupWindow();
