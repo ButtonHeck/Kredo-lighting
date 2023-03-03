@@ -10,6 +10,7 @@ namespace Kredo
 {
 
 class OpenGLWindow;
+class OpenGLLoadEvent;
 
 class OpenGLCanvas : public wxGLCanvas
 {
@@ -18,6 +19,7 @@ public:
 
 private:
     void InitializeContext();
+    void InitializeOpenGL(wxSizeEvent& event);
     bool InitializeManager();
 
     void ActivateRenderLoop(bool on, const wxPoint& capturePosition);
@@ -31,6 +33,7 @@ private:
     void OnMouseMove(wxMouseEvent& event);
     void OnTimer(wxTimerEvent& event);
     void OnWindowLeave(wxMouseEvent& event);
+    void OnOpenGLLoaded(OpenGLLoadEvent& event);
 
 private:
     Unique<wxGLContext> _context;

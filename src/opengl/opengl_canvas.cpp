@@ -12,6 +12,23 @@
 namespace Kredo
 {
 
+class OpenGLLoadEvent : public wxEvent
+{
+public:
+    OpenGLLoadEvent(wxEventType type, int windowID)
+        : wxEvent(windowID, type)
+    {}
+
+    virtual wxEvent* Clone() const override
+    {
+        return new OpenGLLoadEvent(*this);
+    }
+};
+
+wxDECLARE_EVENT(OPENGL_LOAD_EVENT, OpenGLLoadEvent);
+wxDEFINE_EVENT(OPENGL_LOAD_EVENT, OpenGLLoadEvent);
+
+
 OpenGLCanvas::OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow* parent)
     : wxGLCanvas(parent, canvasAttributes, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
     , _context(nullptr)
@@ -19,15 +36,8 @@ OpenGLCanvas::OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow*
     , _renderLoop(false)
     , _mouseCapture(0, 0)
 {
-    Bind(wxEVT_PAINT, &OpenGLCanvas::OnPaint, this);
-    Bind(wxEVT_SIZE, &OpenGLCanvas::OnSize, this);
-    Bind(wxEVT_KEY_DOWN, &OpenGLCanvas::OnKeyDown, this);
-    Bind(wxEVT_KEY_UP, &OpenGLCanvas::OnKeyUp, this);
-    Bind(wxEVT_RIGHT_DOWN, &OpenGLCanvas::OnMouseRightDown, this);
-    Bind(wxEVT_MOTION, &OpenGLCanvas::OnMouseMove, this);
-    Bind(wxEVT_LEAVE_WINDOW, &OpenGLCanvas::OnWindowLeave, this);
-
-    _renderTimer.Bind(wxEVT_TIMER, &OpenGLCanvas::OnTimer, this);
+    Bind(wxEVT_SIZE, &OpenGLCanvas::InitializeOpenGL, this);
+    Bind(OPENGL_LOAD_EVENT, &OpenGLCanvas::OnOpenGLLoaded, this);
 
     InitializeContext();
 }
@@ -42,6 +52,23 @@ void OpenGLCanvas::InitializeContext()
     {
         wxMessageBox(_("Kredo requires an OpenGL 4.5 capable driver!"), _("OpenGL canvas error"), wxOK, this);
         _context.release();
+    }
+}
+
+void OpenGLCanvas::InitializeOpenGL(wxSizeEvent& event)
+{
+    WXUNUSED(event);
+
+    wxLogDebug("OpenGLCanvas: OpenGL initialization...");
+    auto initSuccess = false;
+    if (!_manager)
+        initSuccess = InitializeManager();
+
+    if (initSuccess)
+    {
+        OpenGLLoadEvent loadEvent(OPENGL_LOAD_EVENT, GetId());
+        loadEvent.SetEventObject(this);
+        ProcessWindowEvent(loadEvent);
     }
 }
 
@@ -87,7 +114,7 @@ void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
 
 void OpenGLCanvas::Render(wxDC& dc)
 {
-    WXUNUSED(dc)
+    WXUNUSED(dc);
     if (!_manager)
         return;
 
@@ -110,12 +137,6 @@ void OpenGLCanvas::OnSize(wxSizeEvent& event)
 
     if (!IsShownOnScreen())
         return;
-
-    if (!_manager)
-    {
-        if (!InitializeManager())
-            return;
-    }
 
     const auto size = event.GetSize() * GetContentScaleFactor();
     wxLogDebug("OpenGLCanvas: onSize [%dx%d]", size.GetWidth(), size.GetHeight());
@@ -153,7 +174,7 @@ void OpenGLCanvas::OnMouseMove(wxMouseEvent& event)
 
 void OpenGLCanvas::OnTimer(wxTimerEvent& event)
 {
-    WXUNUSED(event)
+    WXUNUSED(event);
     if (_renderLoop)
         Refresh();
 }
@@ -185,6 +206,23 @@ void OpenGLCanvas::OnWindowLeave(wxMouseEvent& event)
             _manager->UpdateOrigin();
         }
     }
+}
+
+void OpenGLCanvas::OnOpenGLLoaded(OpenGLLoadEvent& event)
+{
+    WXUNUSED(event);
+
+    Unbind(wxEVT_SIZE, &OpenGLCanvas::InitializeOpenGL, this);
+    Bind(wxEVT_SIZE, &OpenGLCanvas::OnSize, this);
+
+    Bind(wxEVT_PAINT, &OpenGLCanvas::OnPaint, this);
+    Bind(wxEVT_KEY_DOWN, &OpenGLCanvas::OnKeyDown, this);
+    Bind(wxEVT_KEY_UP, &OpenGLCanvas::OnKeyUp, this);
+    Bind(wxEVT_RIGHT_DOWN, &OpenGLCanvas::OnMouseRightDown, this);
+    Bind(wxEVT_MOTION, &OpenGLCanvas::OnMouseMove, this);
+    Bind(wxEVT_LEAVE_WINDOW, &OpenGLCanvas::OnWindowLeave, this);
+
+    _renderTimer.Bind(wxEVT_TIMER, &OpenGLCanvas::OnTimer, this);
 }
 
 }
