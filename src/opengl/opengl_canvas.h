@@ -20,7 +20,6 @@ public:
 private:
     void InitializeContext();
     void InitializeOpenGL(wxSizeEvent& event);
-    bool InitializeManager();
 
     void ActivateRenderLoop(bool on, const wxPoint& capturePosition);
     void Render(wxDC& dc);

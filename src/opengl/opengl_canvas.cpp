@@ -1,3 +1,5 @@
+#include <glad/glad.h>
+
 #include "opengl_canvas.h"
 #include "opengl_window.h"
 
@@ -60,38 +62,18 @@ void OpenGLCanvas::InitializeOpenGL(wxSizeEvent& event)
     WXUNUSED(event);
 
     wxLogDebug("OpenGLCanvas: OpenGL initialization...");
-    auto initSuccess = false;
-    if (!_manager)
-        initSuccess = InitializeManager();
-
-    if (initSuccess)
-    {
-        OpenGLLoadEvent loadEvent(OPENGL_LOAD_EVENT, GetId());
-        loadEvent.SetEventObject(this);
-        ProcessWindowEvent(loadEvent);
-    }
-}
-
-bool OpenGLCanvas::InitializeManager()
-{
-    if (!_context)
-        return false;
-
     SetCurrent(*_context);
-
-#ifndef __WXMSW__
-    eglSwapInterval(GetEGLDisplay(), 1);
-#endif
-
-    _manager.reset(new OpenGLManager());
-    if (!_manager->IsInitialized())
+    if (gladLoadGL() != 0)
     {
-        wxMessageBox(_("Error: OpenGL manager failed to initialize"), _("OpenGL initialization error"), wxOK, this);
-        return false;
-    }
+#ifndef __WXMSW__
+        eglSwapInterval(GetEGLDisplay(), 1);
+#endif
+        _manager.reset(new OpenGLManager());
+        OpenGLLoadEvent loadEvent(OPENGL_LOAD_EVENT, GetId());
+        ProcessWindowEvent(loadEvent);
 
-    wxLogInfo("OpenGLCanvas: OpenGL manager and functions successfully initialized");
-    return true;
+        wxLogInfo("OpenGLCanvas: OpenGL manager and functions successfully initialized");
+    }
 }
 
 void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
@@ -115,8 +97,6 @@ void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
 void OpenGLCanvas::Render(wxDC& dc)
 {
     WXUNUSED(dc);
-    if (!_manager)
-        return;
 
     _manager->ProcessEvents();
     _manager->Render();

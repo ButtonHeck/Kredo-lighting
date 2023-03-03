@@ -1,31 +1,22 @@
+#include <glad/glad.h>
+
 #include "opengl_shader.h"
 
 #include <wx/log.h>
 #include <wx/string.h>
 #include <wx/sstream.h>
 #include <wx/wfstream.h>
-#include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Kredo
 {
 
-OpenGLShader::OpenGLShader()
-    : _id(0)
-{
-}
-
-OpenGLShader::~OpenGLShader()
-{
-    Cleanup();
-}
-
-void OpenGLShader::Load(const wxString& vertexPath, const wxString& fragmentPath)
+OpenGLShader::OpenGLShader(const wxString& vertexPath, const wxString& fragmentPath)
+    : _id(glCreateProgram())
 {
     const auto vertexShader = LoadShader(vertexPath, GL_VERTEX_SHADER);
     const auto fragmentShader = LoadShader(fragmentPath, GL_FRAGMENT_SHADER);
 
-    _id = glCreateProgram();
     glAttachShader(_id, vertexShader);
     glAttachShader(_id, fragmentShader);
     glLinkProgram(_id);
@@ -36,13 +27,13 @@ void OpenGLShader::Load(const wxString& vertexPath, const wxString& fragmentPath
     glDeleteShader(fragmentShader);
 }
 
-void OpenGLShader::Load(const wxString& vertexPath, const wxString& geometryPath, const wxString& fragmentPath)
+OpenGLShader::OpenGLShader(const wxString& vertexPath, const wxString& geometryPath, const wxString& fragmentPath)
+    : _id(glCreateProgram())
 {
     const auto vertexShader = LoadShader(vertexPath, GL_VERTEX_SHADER);
     const auto geometryShader = LoadShader(geometryPath, GL_GEOMETRY_SHADER);
     const auto fragmentShader = LoadShader(fragmentPath, GL_FRAGMENT_SHADER);
 
-    _id = glCreateProgram();
     glAttachShader(_id, vertexShader);
     glAttachShader(_id, geometryShader);
     glAttachShader(_id, fragmentShader);
@@ -53,6 +44,11 @@ void OpenGLShader::Load(const wxString& vertexPath, const wxString& geometryPath
     glDeleteShader(vertexShader);
     glDeleteShader(geometryShader);
     glDeleteShader(fragmentShader);
+}
+
+OpenGLShader::~OpenGLShader()
+{
+    Cleanup();
 }
 
 void OpenGLShader::SetBool(const wxString& name, int value) const

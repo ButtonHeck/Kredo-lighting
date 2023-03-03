@@ -1,7 +1,8 @@
+#include <glad/glad.h>
+
 #include "opengl_vertex_array.h"
 
 #include <wx/log.h>
-#include <glad/glad.h>
 
 namespace Kredo
 {

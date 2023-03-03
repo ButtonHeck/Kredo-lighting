@@ -12,11 +12,9 @@ namespace Kredo
 class OpenGLShader
 {
 public:
-    OpenGLShader();
+    OpenGLShader(const wxString& vertexPath, const wxString& fragmentPath);
+    OpenGLShader(const wxString& vertexPath, const wxString& geometryPath, const wxString& fragmentPath);
     ~OpenGLShader();
-
-    void Load(const wxString& vertexPath, const wxString& fragmentPath);
-    void Load(const wxString& vertexPath, const wxString& geometryPath, const wxString& fragmentPath);
 
     void SetBool(const wxString& name, int value) const;
     void SetInt(const wxString& name, int value) const;

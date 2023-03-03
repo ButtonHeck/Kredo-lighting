@@ -23,8 +23,6 @@ public:
     OpenGLManager();
     ~OpenGLManager();
 
-    bool IsInitialized() const;
-
     void ProcessKeyPressed(int keyCode);
     void ProcessKeyReleased(int keyCode);
     void ProcessMouseMove();
@@ -37,8 +35,6 @@ public:
     void Render();
 
 private:
-    bool _initialized;
-
     // temporary
     unsigned int _width, _height;
     Camera _camera;

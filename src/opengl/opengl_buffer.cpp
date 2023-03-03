@@ -1,6 +1,6 @@
-#include "opengl_buffer.h"
-
 #include <glad/glad.h>
+
+#include "opengl_buffer.h"
 
 namespace Kredo
 {

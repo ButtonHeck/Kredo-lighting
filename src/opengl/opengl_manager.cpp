@@ -1,3 +1,5 @@
+#include <glad/glad.h>
+
 #include "filesystem.h"
 #include "opengl_shader.h"
 #include "opengl_buffer.h"
@@ -5,7 +7,6 @@
 
 #include <wx/log.h>
 #include <wx/event.h>
-#include <glad/glad.h>
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -18,79 +19,68 @@ OpenGLManager::OpenGLManager()
     , _origin(0, 0)
     , _camera(Camera(glm::vec3(0.0f, 0.0f, 10.0f)))
     , _hasMouseMove(false)
-    , _shader(CreateUnique<OpenGLShader>())
+    , _shader(CreateUnique<OpenGLShader>(Filesystem::Path(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, "shaders/basic.vs")),
+                                         Filesystem::Path(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, "shaders/basic.fs"))))
 {
     _keysPressed.fill(false);
-    _initialized = gladLoadGL() != 0;
+    _vertexArray = CreateShared<OpenGLVertexArray>();
 
-    if (_initialized)
-    {
-        _vertexArray = CreateShared<OpenGLVertexArray>();
-        _shader->Load(Filesystem::Path(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, "shaders/basic.vs")),
-                      Filesystem::Path(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, "shaders/basic.fs")));
+    glEnable(GL_DEPTH_TEST);
 
-        glEnable(GL_DEPTH_TEST);
+    float vertices[] = {
+      -0.5f, -0.5f, -0.5f,
+       0.5f, -0.5f, -0.5f,
+       0.5f,  0.5f, -0.5f,
+       0.5f,  0.5f, -0.5f,
+      -0.5f,  0.5f, -0.5f,
+      -0.5f, -0.5f, -0.5f,
 
-        float vertices[] = {
-          -0.5f, -0.5f, -0.5f,
-           0.5f, -0.5f, -0.5f,
-           0.5f,  0.5f, -0.5f,
-           0.5f,  0.5f, -0.5f,
-          -0.5f,  0.5f, -0.5f,
-          -0.5f, -0.5f, -0.5f,
+      -0.5f, -0.5f,  0.5f,
+       0.5f, -0.5f,  0.5f,
+       0.5f,  0.5f,  0.5f,
+       0.5f,  0.5f,  0.5f,
+      -0.5f,  0.5f,  0.5f,
+      -0.5f, -0.5f,  0.5f,
 
-          -0.5f, -0.5f,  0.5f,
-           0.5f, -0.5f,  0.5f,
-           0.5f,  0.5f,  0.5f,
-           0.5f,  0.5f,  0.5f,
-          -0.5f,  0.5f,  0.5f,
-          -0.5f, -0.5f,  0.5f,
+      -0.5f,  0.5f,  0.5f,
+      -0.5f,  0.5f, -0.5f,
+      -0.5f, -0.5f, -0.5f,
+      -0.5f, -0.5f, -0.5f,
+      -0.5f, -0.5f,  0.5f,
+      -0.5f,  0.5f,  0.5f,
 
-          -0.5f,  0.5f,  0.5f,
-          -0.5f,  0.5f, -0.5f,
-          -0.5f, -0.5f, -0.5f,
-          -0.5f, -0.5f, -0.5f,
-          -0.5f, -0.5f,  0.5f,
-          -0.5f,  0.5f,  0.5f,
+       0.5f,  0.5f,  0.5f,
+       0.5f,  0.5f, -0.5f,
+       0.5f, -0.5f, -0.5f,
+       0.5f, -0.5f, -0.5f,
+       0.5f, -0.5f,  0.5f,
+       0.5f,  0.5f,  0.5f,
 
-           0.5f,  0.5f,  0.5f,
-           0.5f,  0.5f, -0.5f,
-           0.5f, -0.5f, -0.5f,
-           0.5f, -0.5f, -0.5f,
-           0.5f, -0.5f,  0.5f,
-           0.5f,  0.5f,  0.5f,
+      -0.5f, -0.5f, -0.5f,
+       0.5f, -0.5f, -0.5f,
+       0.5f, -0.5f,  0.5f,
+       0.5f, -0.5f,  0.5f,
+      -0.5f, -0.5f,  0.5f,
+      -0.5f, -0.5f, -0.5f,
 
-          -0.5f, -0.5f, -0.5f,
-           0.5f, -0.5f, -0.5f,
-           0.5f, -0.5f,  0.5f,
-           0.5f, -0.5f,  0.5f,
-          -0.5f, -0.5f,  0.5f,
-          -0.5f, -0.5f, -0.5f,
+      -0.5f,  0.5f, -0.5f,
+       0.5f,  0.5f, -0.5f,
+       0.5f,  0.5f,  0.5f,
+       0.5f,  0.5f,  0.5f,
+      -0.5f,  0.5f,  0.5f,
+      -0.5f,  0.5f, -0.5f
+    };
 
-          -0.5f,  0.5f, -0.5f,
-           0.5f,  0.5f, -0.5f,
-           0.5f,  0.5f,  0.5f,
-           0.5f,  0.5f,  0.5f,
-          -0.5f,  0.5f,  0.5f,
-          -0.5f,  0.5f, -0.5f
-        };
+    Shared<OpenGLVertexBuffer> vertexBuffer = CreateShared<OpenGLVertexBuffer>(vertices, sizeof(vertices));
+    const auto layout = BufferLayout( {{ShaderDataType::Float3, "i_Pos"}} );
 
-        Shared<OpenGLVertexBuffer> vertexBuffer = CreateShared<OpenGLVertexBuffer>(vertices, sizeof(vertices));
-        const auto layout = BufferLayout( {{ShaderDataType::Float3, "i_Pos"}} );
-
-        vertexBuffer->SetLayout(layout);
-        _vertexArray->AddVertexBuffer(vertexBuffer);
-    }
+    vertexBuffer->SetLayout(layout);
+    _vertexArray->AddVertexBuffer(vertexBuffer);
 }
 
 OpenGLManager::~OpenGLManager()
 {
     glFinish();
-}
-
-bool OpenGLManager::IsInitialized() const
-{
-    return _initialized;
 }
 
 void OpenGLManager::ProcessKeyPressed(int keyCode)
@@ -148,12 +138,9 @@ void OpenGLManager::ClearEvents()
 
 void OpenGLManager::SetSize(int width, int height)
 {
-    if (_initialized)
-    {
-        _width = width;
-        _height = height;
-        glViewport(0, 0, _width, _height);
-    }
+    _width = width;
+    _height = height;
+    glViewport(0, 0, _width, _height);
 }
 
 void OpenGLManager::Render()
