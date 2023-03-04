@@ -4,10 +4,9 @@
 namespace Kredo
 {
 
-SceneLayer::SceneLayer(Shared<Scene> scene)
+SceneLayer::SceneLayer(const Scene* const scene)
     : _scene(scene)
 {
-    _scene->AddLayer(this);
 }
 
 }

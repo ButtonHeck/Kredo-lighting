@@ -1,7 +1,6 @@
 #pragma once
 
 #include "camera.h"
-#include "pointers.h"
 
 #include <wx/gdicmn.h>
 #include <array>
@@ -40,8 +39,7 @@ private:
     Camera _camera;
     std::vector<SceneLayer*> _layers;
     std::array<bool, WXK_WINDOWS_MENU> _keysPressed;
-    wxPoint _origin;
-    bool _hasMouseMove;
+    wxPoint _mousePosition;
 };
 
 }

@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 
+#include "scene.h"
 #include "test_layer.h"
 #include "opengl_canvas.h"
 #include "opengl_window.h"
@@ -45,6 +46,11 @@ OpenGLCanvas::OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow*
     InitializeContext();
 }
 
+OpenGLCanvas::~OpenGLCanvas()
+{
+    delete _scene;
+}
+
 void OpenGLCanvas::InitializeContext()
 {
     wxGLContextAttrs contextAttributes;
@@ -66,15 +72,22 @@ void OpenGLCanvas::InitializeOpenGL(wxSizeEvent& event)
     SetCurrent(*_context);
     if (gladLoadGL() != 0)
     {
+        wxLogInfo("OpenGLCanvas: OpenGL successfully initialized");
 #ifndef __WXMSW__
         eglSwapInterval(GetEGLDisplay(), 1);
 #endif
-        _scene.reset(new Scene());
         OpenGLLoadEvent loadEvent(OPENGL_LOAD_EVENT, GetId());
         ProcessWindowEvent(loadEvent);
-
-        wxLogInfo("OpenGLCanvas: OpenGL manager and functions successfully initialized");
+        InitializeScene();
     }
+}
+
+void OpenGLCanvas::InitializeScene()
+{
+    _scene = new Scene();
+    _scene->AddLayer(new TestLayer(_scene));
+
+    wxLogInfo("OpenGLCanvas: scene successfully initialized");
 }
 
 void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
@@ -204,9 +217,6 @@ void OpenGLCanvas::OnOpenGLLoaded(OpenGLLoadEvent& event)
     Bind(wxEVT_LEAVE_WINDOW, &OpenGLCanvas::OnWindowLeave, this);
 
     _renderTimer.Bind(wxEVT_TIMER, &OpenGLCanvas::OnTimer, this);
-
-    // temporary
-    const auto testLayer = new TestLayer(_scene);
 }
 
 }

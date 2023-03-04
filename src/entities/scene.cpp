@@ -1,7 +1,6 @@
 #include <glad/glad.h>
 
 #include "scene.h"
-#include "filesystem.h"
 #include "scene_layer.h"
 
 #include <wx/log.h>
@@ -13,9 +12,8 @@ namespace Kredo
 {
 
 Scene::Scene()
-    : _origin(0, 0)
+    : _mousePosition(0, 0)
     , _camera(Camera(glm::vec3(0.0f, 0.0f, 10.0f)))
-    , _hasMouseMove(false)
 {
     _keysPressed.fill(false);
     glEnable(GL_DEPTH_TEST);
@@ -23,6 +21,9 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+    for (auto layer: _layers)
+        delete layer;
+
     glFinish();
 }
 
@@ -48,27 +49,21 @@ void Scene::ProcessKeyReleased(int keyCode)
 
 void Scene::ProcessMouseMove()
 {
-    _hasMouseMove = true;
+    int x, y;
+    wxGetMousePosition(&x, &y);
+    const auto mouseDx = x - _mousePosition.x;
+    const auto mouseDy = _mousePosition.y - y;
+    _mousePosition = wxPoint(x, y);
+    _camera.Rotate(float(mouseDx), float(mouseDy));
 }
 
 void Scene::UpdateOrigin()
 {
-    wxGetMousePosition(&_origin.x, &_origin.y);
+    wxGetMousePosition(&_mousePosition.x, &_mousePosition.y);
 }
 
 void Scene::ProcessEvents()
 {
-    if (_hasMouseMove)
-    {
-        int x, y;
-        wxGetMousePosition(&x, &y);
-        const auto mouseDx = x - _origin.x;
-        const auto mouseDy = _origin.y - y;
-        _origin = wxPoint(x, y);
-        _camera.Rotate(float(mouseDx), float(mouseDy));
-        _hasMouseMove = false;
-    }
-
     if (_keysPressed['W'])
         _camera.Move(Camera::ForwardDirection, 0.1f);
     if (_keysPressed['S'])
@@ -85,7 +80,6 @@ void Scene::ProcessEvents()
 
 void Scene::ClearEvents()
 {
-    _hasMouseMove = false;
     _keysPressed.fill(false);
 }
 

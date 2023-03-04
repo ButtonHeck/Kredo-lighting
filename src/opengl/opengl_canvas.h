@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scene.h"
 #include "pointers.h"
 
 #include <wx/timer.h>
@@ -9,6 +8,7 @@
 namespace Kredo
 {
 
+class Scene;
 class OpenGLWindow;
 class OpenGLLoadEvent;
 
@@ -16,10 +16,12 @@ class OpenGLCanvas : public wxGLCanvas
 {
 public:
     explicit OpenGLCanvas(const wxGLAttributes& canvasAttributes, OpenGLWindow* parent = nullptr);
+    ~OpenGLCanvas();
 
 private:
     void InitializeContext();
     void InitializeOpenGL(wxSizeEvent& event);
+    void InitializeScene();
 
     void ActivateRenderLoop(bool on, const wxPoint& capturePosition);
     void Render(wxDC& dc);
@@ -36,7 +38,7 @@ private:
 
 private:
     Unique<wxGLContext> _context;
-    Shared<Scene> _scene;
+    Scene* _scene;
     bool _renderLoop;
     wxPoint _mouseCapture;
     wxTimer _renderTimer;

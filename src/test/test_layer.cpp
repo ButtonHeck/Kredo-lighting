@@ -12,7 +12,7 @@
 namespace Kredo
 {
 
-TestLayer::TestLayer(Shared<Scene>& scene)
+TestLayer::TestLayer(const Scene* const scene)
     : SceneLayer(scene)
     , _shader(CreateUnique<OpenGLShader>(Filesystem::Path(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, "shaders/basic.vs")),
                                          Filesystem::Path(wxString::Format("%s/%s", KREDO_RESOURCES_DIR, "shaders/basic.fs"))))

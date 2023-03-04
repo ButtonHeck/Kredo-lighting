@@ -12,7 +12,7 @@ class OpenGLShader;
 class TestLayer : public SceneLayer
 {
 public:
-    explicit TestLayer(Shared<Scene>& scene);
+    explicit TestLayer(const Scene* const scene);
     ~TestLayer() = default;
 
     void Render() const override;
