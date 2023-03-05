@@ -13,7 +13,7 @@ namespace Kredo
 
 Scene::Scene()
     : _mousePosition(0, 0)
-    , _camera(Camera(glm::vec3(0.0f, 0.0f, 10.0f)))
+    , _camera()
 {
     _keysPressed.fill(false);
     glEnable(GL_DEPTH_TEST);
@@ -47,22 +47,19 @@ void Scene::ProcessKeyReleased(int keyCode)
     _keysPressed[keyCode] = false;
 }
 
-void Scene::ProcessMouseMove()
+void Scene::ProcessMouseMove(const wxPoint& mousePosition, bool warped)
 {
-    int x, y;
-    wxGetMousePosition(&x, &y);
-    const auto mouseDx = x - _mousePosition.x;
-    const auto mouseDy = _mousePosition.y - y;
-    _mousePosition = wxPoint(x, y);
-    _camera.Rotate(float(mouseDx), float(mouseDy));
+    if (!warped)
+    {
+        const auto dx = mousePosition.x - _mousePosition.x;
+        const auto dy = _mousePosition.y - mousePosition.y;
+        _camera.Rotate(float(dx), float(dy));
+    }
+
+    _mousePosition = mousePosition;
 }
 
-void Scene::UpdateOrigin()
-{
-    wxGetMousePosition(&_mousePosition.x, &_mousePosition.y);
-}
-
-void Scene::ProcessEvents()
+void Scene::ProcessKeyboard()
 {
     if (_keysPressed['W'])
         _camera.Move(Camera::ForwardDirection, 0.1f);
@@ -78,7 +75,7 @@ void Scene::ProcessEvents()
         _camera.Move(Camera::DownDirection, 0.1f);
 }
 
-void Scene::ClearEvents()
+void Scene::ClearKeyboard()
 {
     _keysPressed.fill(false);
 }

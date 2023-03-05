@@ -26,11 +26,10 @@ public:
 
     void ProcessKeyPressed(int keyCode);
     void ProcessKeyReleased(int keyCode);
-    void ProcessMouseMove();
-    void UpdateOrigin();
+    void ProcessMouseMove(const wxPoint& mousePosition, bool warped = false);
 
-    void ProcessEvents();
-    void ClearEvents();
+    void ProcessKeyboard();
+    void ClearKeyboard();
 
     void SetSize(int width, int height);
     void Render();

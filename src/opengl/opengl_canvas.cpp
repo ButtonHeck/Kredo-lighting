@@ -96,14 +96,14 @@ void OpenGLCanvas::ActivateRenderLoop(bool on, const wxPoint& capturePosition)
     {
         _renderLoop = true;
         _mouseCapture = capturePosition;
-        _scene->UpdateOrigin();
+        _scene->ProcessMouseMove(capturePosition, true);
         _renderTimer.Start(1000.0 / 60.0);
     }
     else if (!on && _renderLoop)
     {
         _renderLoop = false;
         WarpPointer(_mouseCapture.x, _mouseCapture.y);
-        _scene->ClearEvents();
+        _scene->ClearKeyboard();
         _renderTimer.Stop();
     }
 }
@@ -112,7 +112,7 @@ void OpenGLCanvas::Render(wxDC& dc)
 {
     WXUNUSED(dc);
 
-    _scene->ProcessEvents();
+    _scene->ProcessKeyboard();
     _scene->Render();
     SwapBuffers();
 }
@@ -163,7 +163,7 @@ void OpenGLCanvas::OnMouseMove(wxMouseEvent& event)
     event.Skip();
 
     if (_renderLoop)
-        _scene->ProcessMouseMove();
+        _scene->ProcessMouseMove(event.GetPosition());
 }
 
 void OpenGLCanvas::OnTimer(wxTimerEvent& event)
@@ -178,27 +178,20 @@ void OpenGLCanvas::OnWindowLeave(wxMouseEvent& event)
     if (_renderLoop)
     {
         const auto size = GetSize() * GetContentScaleFactor();
+        const auto warped = [&]()
+        {
+            if (event.GetX() <= 0)
+                return wxPoint(size.GetWidth(), event.GetY());
+            else if (event.GetX() >= size.GetWidth())
+                return wxPoint(0, event.GetY());
+            else if (event.GetY() <= 0)
+                return wxPoint(event.GetX(), size.GetHeight());
+            else
+                return wxPoint(event.GetX(), 0);
+        }();
 
-        if (event.GetX() <= 0)
-        {
-            WarpPointer(size.GetWidth(), event.GetY());
-            _scene->UpdateOrigin();
-        }
-        else if (event.GetX() >= size.GetWidth())
-        {
-            WarpPointer(0, event.GetY());
-            _scene->UpdateOrigin();
-        }
-        else if (event.GetY() <= 0)
-        {
-            WarpPointer(event.GetX(), size.GetHeight());
-            _scene->UpdateOrigin();
-        }
-        else if (event.GetY() >= size.GetHeight())
-        {
-            WarpPointer(event.GetX(), 0);
-            _scene->UpdateOrigin();
-        }
+        _scene->ProcessMouseMove(warped, true);
+        WarpPointer(warped.x, warped.y);
     }
 }
 
