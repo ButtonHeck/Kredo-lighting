@@ -1,9 +1,10 @@
 #include <glad/glad.h>
 
 #include "scene.h"
-#include "test_layer.h"
 #include "opengl_canvas.h"
 #include "opengl_window.h"
+// temp
+#include "test_layer.h"
 
 #include <wx/log.h>
 #include <wx/msgdlg.h>
@@ -84,7 +85,10 @@ void OpenGLCanvas::InitializeOpenGL(wxSizeEvent& event)
 
 void OpenGLCanvas::InitializeScene()
 {
+    // TODO: load default or last used
     _scene = new Scene();
+
+    // temp
     _scene->AddLayer(new TestLayer(_scene));
 
     wxLogInfo("OpenGLCanvas: scene successfully initialized");
@@ -115,6 +119,20 @@ void OpenGLCanvas::Render(wxDC& dc)
     _scene->ProcessKeyboard();
     _scene->Render();
     SwapBuffers();
+}
+
+wxPoint OpenGLCanvas::WarpPoint(const wxPoint& point)
+{
+    const auto size = GetSize() * GetContentScaleFactor();
+
+    if (point.x <= 0)
+        return wxPoint(size.GetWidth(), point.y);
+    else if (point.x >= size.GetWidth())
+        return wxPoint(0, point.y);
+    else if (point.y <= 0)
+        return wxPoint(point.x, size.GetHeight());
+    else
+        return wxPoint(point.x, 0);
 }
 
 void OpenGLCanvas::OnPaint(wxPaintEvent& event)
@@ -177,19 +195,7 @@ void OpenGLCanvas::OnWindowLeave(wxMouseEvent& event)
 {
     if (_renderLoop)
     {
-        const auto size = GetSize() * GetContentScaleFactor();
-        const auto warped = [&]()
-        {
-            if (event.GetX() <= 0)
-                return wxPoint(size.GetWidth(), event.GetY());
-            else if (event.GetX() >= size.GetWidth())
-                return wxPoint(0, event.GetY());
-            else if (event.GetY() <= 0)
-                return wxPoint(event.GetX(), size.GetHeight());
-            else
-                return wxPoint(event.GetX(), 0);
-        }();
-
+        const auto warped = WarpPoint(event.GetPosition());
         _scene->ProcessMouseMove(warped, true);
         WarpPointer(warped.x, warped.y);
     }

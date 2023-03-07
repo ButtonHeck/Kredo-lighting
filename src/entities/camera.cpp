@@ -8,16 +8,18 @@ namespace Kredo
 
 Camera::Camera(const glm::vec3& position)
     : _position(position)
-    , _front(glm::vec3(0.0f, 0.0f, -1.0f))
-    , _right(glm::vec3(1.0f, 0.0f, 0.0f))
-    , _up(glm::vec3(0.0f, 1.0f, 0.0f))
-    , _worldUp(glm::vec3(0.0f, 1.0f, 0.0f))
+    , _front(0.0f, 0.0f, -1.0f)
+    , _right(1.0f, 0.0f, 0.0f)
+    , _up(0.0f, 1.0f, 0.0f)
+    , _worldUp(0.0f, 1.0f, 0.0f)
     , _yaw(-90.0f)
     , _pitch(0.0f)
     , _moveSpeed(2.5f)
     , _rotateSensitivity(0.05f)
+    , _viewport(0, 0)
     , _fov(60.0f)
-    , _aspectRatio(0.0f)
+    , _nearPlane(0.1f)
+    , _farPlane(100.0f)
 {
     Update();
 }
@@ -27,19 +29,19 @@ glm::mat4 Camera::GetViewMatrix() const
     return glm::lookAt(_position, _position + _front, _up);
 }
 
-float Camera::GetFov() const
+glm::mat4 Camera::GetProjectionMatrix() const
 {
-    return _fov;
+    return glm::perspective(glm::radians(_fov), float(_viewport.GetWidth()) / float(_viewport.GetHeight()), _nearPlane, _farPlane);
 }
 
-void Camera::SetAspectRatio(float aspectRatio)
+void Camera::SetViewport(int width, int height)
 {
-    _aspectRatio = aspectRatio;
+    _viewport.Set(width, height);
 }
 
-float Camera::GetAspectRatio() const
+wxSize Camera::GetViewport() const
 {
-    return _aspectRatio;
+    return _viewport;
 }
 
 void Camera::Move(MoveDirection direction, float delta)

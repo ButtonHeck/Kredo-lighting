@@ -20,6 +20,9 @@ public:
     Scene();
     ~Scene();
 
+    void SetName(const wxString& name);
+    const wxString& GetName() const;
+
     void AddLayer(SceneLayer* layer);
 
     const Camera& GetCamera() const;
@@ -35,6 +38,7 @@ public:
     void Render();
 
 private:
+    wxString _name;
     Camera _camera;
     std::vector<SceneLayer*> _layers;
     std::array<bool, WXK_WINDOWS_MENU> _keysPressed;

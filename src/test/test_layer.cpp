@@ -91,9 +91,7 @@ void TestLayer::Render() const
 
     _shader->Use();
     _shader->SetMat4("u_View", camera.GetViewMatrix());
-
-    const auto projection = glm::perspective(glm::radians(camera.GetFov()), camera.GetAspectRatio(), 0.1f, 100.0f);
-    _shader->SetMat4("u_Projection", projection);
+    _shader->SetMat4("u_Projection", camera.GetProjectionMatrix());
 
     for (auto i = 0; i < 10; i++)
     {

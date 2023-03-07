@@ -12,7 +12,8 @@ namespace Kredo
 {
 
 Scene::Scene()
-    : _mousePosition(0, 0)
+    : _name("")
+    , _mousePosition(0, 0)
     , _camera()
 {
     _keysPressed.fill(false);
@@ -25,6 +26,16 @@ Scene::~Scene()
         delete layer;
 
     glFinish();
+}
+
+void Scene::SetName(const wxString& name)
+{
+    _name = name;
+}
+
+const wxString& Scene::GetName() const
+{
+    return _name;
 }
 
 void Scene::AddLayer(SceneLayer* layer)
@@ -83,7 +94,7 @@ void Scene::ClearKeyboard()
 void Scene::SetSize(int width, int height)
 {
     glViewport(0, 0, width, height);
-    _camera.SetAspectRatio(float(width) / float(height));
+    _camera.SetViewport(width, height);
 }
 
 void Scene::Render()

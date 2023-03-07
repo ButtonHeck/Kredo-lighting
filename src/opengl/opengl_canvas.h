@@ -25,6 +25,7 @@ private:
 
     void ActivateRenderLoop(bool on, const wxPoint& capturePosition);
     void Render(wxDC& dc);
+    wxPoint WarpPoint(const wxPoint& point);
 
     void OnPaint(wxPaintEvent& event);
     void OnSize(wxSizeEvent& event);
