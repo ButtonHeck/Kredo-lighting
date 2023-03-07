@@ -83,13 +83,18 @@ endif()
 if (NOT EXISTS "${KREDO_VENDOR_DIR}/glm/CMakeLists.txt")
     message(FATAL_ERROR "glm submodule was not downloaded! GIT_SUBMODULE was turned off or failed. Update submodules and try again.")
 endif()
+if (NOT EXISTS "${KREDO_VENDOR_DIR}/yaml-cpp/CMakeLists.txt")
+    message(FATAL_ERROR "yaml-cpp submodule was not downloaded! GIT_SUBMODULE was turned off or failed. Update submodules and try again.")
+endif()
 
 option(ASSIMP_BUILD_TESTS OFF)
 option(ASSIMP_INSTALL OFF)
+option(YAML_CPP_BUILD_TOOLS OFF)
 
 add_subdirectory(vendor/Glad)
 add_subdirectory(vendor/assimp)
 add_subdirectory(vendor/glm)
+add_subdirectory(vendor/yaml-cpp)
 
 find_package(wxWidgets REQUIRED COMPONENTS core gl)
 include(${wxWidgets_USE_FILE})
@@ -100,17 +105,20 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE "${KREDO_VENDOR_DIR}/Glad/include"
     PRIVATE "${KREDO_VENDOR_DIR}/assimp/include"
     PRIVATE "${KREDO_VENDOR_DIR}/glm"
+    PRIVATE "${KREDO_VENDOR_DIR}/yaml-cpp/include"
 )
 
 target_link_directories(${PROJECT_NAME}
     PRIVATE "${KREDO_VENDOR_DIR}/vendor/Glad/src"
     PRIVATE "${KREDO_VENDOR_DIR}/vendor/assimp/lib"
+    PRIVATE "${KREDO_VENDOR_DIR}/vendor/yaml-cpp/src"
 )
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE ${wxWidgets_LIBRARIES}
     PRIVATE glad
     PRIVATE assimp
+    PRIVATE yaml-cpp
     PRIVATE EGL
     PRIVATE dl
 )
