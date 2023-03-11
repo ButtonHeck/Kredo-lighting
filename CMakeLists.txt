@@ -86,6 +86,9 @@ endif()
 if (NOT EXISTS "${KREDO_VENDOR_DIR}/yaml-cpp/CMakeLists.txt")
     message(FATAL_ERROR "yaml-cpp submodule was not downloaded! GIT_SUBMODULE was turned off or failed. Update submodules and try again.")
 endif()
+if (NOT EXISTS "${KREDO_VENDOR_DIR}/entt/CMakeLists.txt")
+    message(FATAL_ERROR "entt submodule was not downloaded! GIT_SUBMODULE was turned off or failed. Update submodules and try again.")
+endif()
 
 option(ASSIMP_BUILD_TESTS OFF)
 option(ASSIMP_INSTALL OFF)
@@ -95,6 +98,7 @@ add_subdirectory(vendor/Glad)
 add_subdirectory(vendor/assimp)
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/yaml-cpp)
+add_subdirectory(vendor/entt)
 
 find_package(wxWidgets REQUIRED COMPONENTS core gl)
 include(${wxWidgets_USE_FILE})
@@ -106,6 +110,7 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE "${KREDO_VENDOR_DIR}/assimp/include"
     PRIVATE "${KREDO_VENDOR_DIR}/glm"
     PRIVATE "${KREDO_VENDOR_DIR}/yaml-cpp/include"
+    PRIVATE "${KREDO_VENDOR_DIR}/entt/include"
 )
 
 target_link_directories(${PROJECT_NAME}
